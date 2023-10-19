@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 import { Link } from 'react-router-dom';
 import './loginValidation';
 
@@ -7,6 +9,13 @@ export default function () {
         email: '',
         password: ''
     })
+
+    const [radioValue, setRadioValue] = useState('1');
+    const radios = [
+        { name: 'Admin', value: '1' },
+        { name: 'Nurse', value: '2' },
+        { name: 'Patient', value: '3' },
+      ];
 
     const [errors, setErrors] = useState({})
 
@@ -35,6 +44,23 @@ export default function () {
                     <input type='password' placeholder='Enter Password' name='password'
                     onChange={handleInput} className='form-control rounded-0'/>
                 </div>
+
+                <ButtonGroup className="mb-2">
+                    {radios.map((radio, idx) => (
+                    <ToggleButton
+                        key={idx}
+                        id={`radio-${idx}`}
+                        type="radio"
+                        variant="secondary"
+                        name="radio"
+                        value={radio.value}
+                        checked={radioValue === radio.value}
+                        onChange={(e) => setRadioValue(e.currentTarget.value)}
+                    >
+                        {radio.name}
+                    </ToggleButton>
+                    ))}
+                </ButtonGroup>
 
                 <button className='btn btn-success w-100 pad2x rounded-0'>Login</button>
 
