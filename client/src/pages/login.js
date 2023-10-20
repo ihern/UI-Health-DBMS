@@ -45,7 +45,7 @@ export default function () {
                     onChange={handleInput} className='form-control rounded-0'/>
                 </div>
 
-                <ButtonGroup className="mb-2">
+                <ButtonGroup className="mb-3">
                     {radios.map((radio, idx) => (
                     <ToggleButton
                         key={idx}
