@@ -51,7 +51,7 @@ export default function () {
                         key={idx}
                         id={`radio-${idx}`}
                         type="radio"
-                        variant="secondary"
+                        variant="outline-primary"
                         name="radio"
                         value={radio.value}
                         checked={radioValue === radio.value}
