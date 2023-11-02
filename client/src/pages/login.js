@@ -3,6 +3,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
 import { Link } from 'react-router-dom';
 import './loginValidation';
+import Validation from './loginValidation';
 
 export default function () {
     const [values, setValues] = useState({
@@ -25,6 +26,7 @@ export default function () {
 
     const handleSubmit = (event) => { 
         event.preventDefault();
+        setErrors(Validation(values));
     }
     
     return (
@@ -37,12 +39,14 @@ export default function () {
                     <label htmlFor='email'><strong>Email</strong></label>
                     <input type='email' placeholder='Enter Email' name='email'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.email && <span className='text-danger'> {errors.email}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='password'><strong>Password</strong></label>
                     <input type='password' placeholder='Enter Password' name='password'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.password && <span className='text-danger'> {errors.password}</span>}
                 </div>
 
                 <ButtonGroup className="mb-3">

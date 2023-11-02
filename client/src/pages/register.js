@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Validation } from './loginValidation'
+import Validation from './registerValidation'
+import axios from 'axios'
 
 export default function() {
 
@@ -25,9 +26,16 @@ export default function() {
   }
 
   const handleSubmit = (event) => { 
-      event.preventDefault();
-      setErrors(Validation(values))
+        event.preventDefault();
+        setErrors(Validation(values));
+
+        if (errors.name === "" && errors.email === "" && errors.password === "") {
+            axios.post('http://localhost:3000/register', values)
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        }
   }
+
   return (
     <div className='d-flex justify-content-center align-items-center bg-primary vh-200'>
         <div className='bg-white p-3 rounded w-25'>
@@ -39,36 +47,42 @@ export default function() {
                     <label htmlFor='name'><strong>Name</strong></label>
                     <input type='name' placeholder='Enter Full Name' name='name'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.name && <span className='text-danger'> {errors.name}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='ssn'><strong>SSN</strong></label>
                     <input type='ssn' placeholder='Enter Social Security Number' name='ssn'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.ssn && <span className='text-danger'> {errors.ssn}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='age'><strong>Age</strong></label>
                     <input type='age' placeholder='Enter Age' name='age'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.age && <span className='text-danger'> {errors.age}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='gender'><strong>Gender</strong></label>
                     <input type='gender' placeholder='Enter Gender' name='gender'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.gender && <span className='text-danger'> {errors.gender}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='race'><strong>Race</strong></label>
                     <input type='race' placeholder='Enter Race' name='race'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.race && <span className='text-danger'> {errors.race}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='occupation'><strong>Occupation</strong></label>
                     <input type='occupation' placeholder='Enter Occupation Class' name='occupation'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.occupation && <span className='text-danger'> {errors.occupation}</span>}
                 </div>
 
                 <div className='mb-3'>
@@ -81,24 +95,28 @@ export default function() {
                     <label htmlFor='phone'><strong>Phone Number</strong></label>
                     <input type='phone' placeholder='Enter Phone Number' name='phone'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.phone && <span className='text-danger'> {errors.phone}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='address'><strong>Address</strong></label>
                     <input type='address' placeholder='Enter Address' name='address'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.address && <span className='text-danger'> {errors.address}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='email'><strong>Email</strong></label>
                     <input type='email' placeholder='Enter Email' name='email'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.email && <span className='text-danger'> {errors.email}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='password'><strong>Password</strong></label>
                     <input type='password' placeholder='Enter Password' name='password'
                     onChange={handleInput} className='form-control rounded-0'/>
+                    {errors.password && <span className='text-danger'> {errors.password}</span>}
                 </div>
 
                 <button className='btn btn-success w-100 pad2x rounded-0'>Register</button>
