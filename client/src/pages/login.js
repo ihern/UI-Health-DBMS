@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import ToggleButton from 'react-bootstrap/ToggleButton';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './loginValidation';
 import Validation from './loginValidation';
 
@@ -18,15 +18,31 @@ export default function () {
         { name: 'Patient', value: '3' },
       ];
 
+    const navigate = useNavigate();
+
     const [errors, setErrors] = useState({})
 
     const handleInput = (event) => {
-        setValues(prev => ({...prev, [event.target.name]: [event.target.value]}))
+        setValues((prev) => ({ ...prev, [event.target.name]: event.target.value }));
     }
 
     const handleSubmit = (event) => { 
         event.preventDefault();
         setErrors(Validation(values));
+
+        // Posting data to UI-Health database
+        Axios.post("http://localhost:4000/login", values)
+        .then(res => {
+
+            // TODO: add conditions here to check for admin, nurse and return values from radio value?
+            //       to control which home page they are redirected to? have each homepage have specific table views?
+            if (res.data === "Success") {
+                navigate('/home');
+            } else {
+                alert("No record found -- try to login again.");
+            }
+        })
+        .catch(err => console.log(err));
     }
     
     return (
@@ -66,11 +82,11 @@ export default function () {
                     ))}
                 </ButtonGroup>
 
-                <button className='btn btn-success w-100 pad2x rounded-0'>Login</button>
+                <button type='submit' onClick={handleSubmit} className='btn btn-success w-100 pad2x rounded-0'>Login</button>
 
                 <p></p>
 
-                <Link to='/register' className='btn btn-default border w-100 bg-light rounded-0' text-decoration>Register Patient</Link>
+                <Link to='/register' className='btn btn-default border w-100 bg-light rounded-0'>Register Patient</Link>
             </form>
         </div>
     </div>

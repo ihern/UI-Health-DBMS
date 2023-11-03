@@ -7,52 +7,78 @@ const mysql = require('mysql2');
 
 const PORT = process.env.PORT || 4000;
 
-// app.use(express.json());
 
 var corsOptions = {
-   origin: "http://localhost:4000"
+   origin: ["http://localhost:3000", "http://localhost:3000/register"]
  };
  
 app.use(cors(corsOptions));
 
-app.use(bodyParser.json());
+// app.use(cors());
+app.use(express.json());
+
+// app.use(bodyParser.json());
 
 // Creating database connection
-// const dataBase = mysql.createConnection({
-//    host: 'localhost',
-//    user: 'root',
-//    password: '',
-//    database: 'ui-health-db'
-// })
+const dataBase = mysql.createConnection({
+   host: "localhost",
+   user: "root",
+   password: "",
+   database: "ui-health-db"
+});
 
 app.get('/', (req, res) => {
-   res.send("Hello world!")
+   res.send("Hello world!");
+});
+
+app.get('/register', (req, res) => {
+   res.send("beep boop");
 });
 
 app.post('/register', (req, res) => {
-   const sql  = "INSERT INTO patient ('name', 'ssn', 'age', 'gender', 'race', 'occupation', 'medhist', 'phone', 'address', 'email', 'password') VALUES (?)";
+   const sql = "INSERT INTO patient (`ssn`, `fname`, `mi`, `lname`, `address`, `phone_number`, `race`, `gender`, `age`, `medical_history`, `occupation_class`, `email`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
    const values = [
-      req.body.name,
       req.body.ssn,
-      req.body.age,
-      req.body.gender,
-      req.body.race,
-      req.body.occupation,
-      req.body.medhist,
-      req.body.phone,
+      req.body.fname,
+      req.body.mi,
+      req.body.lname,
       req.body.address,
+      req.body.phone_number,
+      req.body.race,
+      req.body.gender,
+      req.body.age,
+      req.body.medical_history,
+      req.body.occupation_class,
       req.body.email,
       req.body.password
-   ]
-   
-   dataBase.query(sql, [values], (err, data) => {
+   ];
+
+   dataBase.query(sql, values, (err, data) => {
       if (err) {
-         return res.json("Error")
+         console.error(err);
+         return res.status(500).json({ error: "An error occurred" });
       }
 
-      return res.json(data);
+      return res.status(200).json(data);
    });
+});
+
+app.post('/login', (req, res) => {
+   const sql = "SELECT * FROM login WHERE `email` = ? AND `password` = ?";
+   dataBase.query(sql, [req.body.email, req.body.password], (err, data) => {
+      if (err) {
+         return res.json("Error");
+      }
+
+      if (data.length > 0) { // TODO: Add condition here to check for the radio button value?
+         return res.json("Success");
+      } else {
+         return res.json("Failed");
+      }
+   })
 })
+
+
 
 app.listen(PORT, () => {
    console.log(`Server Running on Port ${PORT}`);
