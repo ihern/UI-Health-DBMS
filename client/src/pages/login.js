@@ -4,19 +4,23 @@ import ToggleButton from 'react-bootstrap/ToggleButton';
 import { Link, useNavigate } from 'react-router-dom';
 import './loginValidation';
 import Validation from './loginValidation';
+import Axios from 'axios'
+
 
 export default function () {
-    const [values, setValues] = useState({
-        email: '',
-        password: ''
-    })
 
     const [radioValue, setRadioValue] = useState('1');
     const radios = [
-        { name: 'Admin', value: '1' },
-        { name: 'Nurse', value: '2' },
-        { name: 'Patient', value: '3' },
+        { name: 'Admin', value: 'admin' },
+        { name: 'Nurse', value: 'nurse' },
+        { name: 'Patient', value: 'patient' },
       ];
+
+    const [values, setValues] = useState({
+        email: '',
+        password: '',
+        // source: radioValue
+    })
 
     const navigate = useNavigate();
 
@@ -37,9 +41,9 @@ export default function () {
             // TODO: add conditions here to check for admin, nurse and return values from radio value?
             //       to control which home page they are redirected to? have each homepage have specific table views?
             if (res.data === "Success") {
-                navigate('/home');
+                navigate(`/${radioValue}Home`);
             } else {
-                alert("No record found -- try to login again.");
+                alert("No record found -- try to login again or select the correct user.");
             }
         })
         .catch(err => console.log(err));

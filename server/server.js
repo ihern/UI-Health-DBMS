@@ -35,6 +35,18 @@ app.get('/register', (req, res) => {
    res.send("beep boop");
 });
 
+app.get('/admin_dashboard', (req, res) => {
+   res.send("Hello admin!");
+});
+
+app.get('/nurse_dashboard', (req, res) => {
+   res.send("Hello nurse!");
+});
+
+app.get('/patient_dashboard', (req, res) => {
+   res.send("Hello patient!");
+});
+
 app.post('/register', (req, res) => {
    const sql = "INSERT INTO patient (`ssn`, `fname`, `mi`, `lname`, `address`, `phone_number`, `race`, `gender`, `age`, `medical_history`, `occupation_class`, `email`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
    const values = [
@@ -77,6 +89,26 @@ app.post('/login', (req, res) => {
       }
    })
 })
+
+// app.post('/login', (req, res) => {
+//    const sql = "SELECT * FROM login WHERE `email` = ? AND `password` = ?";
+//    dataBase.query(sql, [req.body.email, req.body.password], (err, data) => {
+//       if (err) {
+//          return res.json("Error");
+//       }
+
+//       if (data.length > 0) {
+//          const userSource = data[0].source;
+//          if (userSource === req.body.source) {
+//             return res.json("Success");
+//          } else {
+//             return res.json("Failed: Source does not match.");
+//          }
+//       } else {
+//          return res.json("Failed");
+//       }
+//    });
+// });
 
 
 
