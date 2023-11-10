@@ -7,7 +7,7 @@ import Validation from './loginValidation';
 import Axios from 'axios'
 
 
-export default function () {
+export default function Login () {
 
     const [radioValue, setRadioValue] = useState('1');
     const radios = [

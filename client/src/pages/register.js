@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Validation from './registerValidation'
 import Axios from 'axios'
 
-export default function() {
+export default function Register () {
 
   const [values, setValues] = useState({
     ssn: '',
