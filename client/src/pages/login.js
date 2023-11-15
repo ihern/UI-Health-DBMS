@@ -9,7 +9,7 @@ import Axios from 'axios'
 
 export default function Login () {
 
-    const [radioValue, setRadioValue] = useState('1');
+    const [radioValue, setRadioValue] = useState();
     const radios = [
         { name: 'Admin', value: 'admin' },
         { name: 'Nurse', value: 'nurse' },
@@ -19,8 +19,8 @@ export default function Login () {
     const [values, setValues] = useState({
         email: '',
         password: '',
-        // source: radioValue
-    })
+        source: radioValue
+    });
 
     const navigate = useNavigate();
 
@@ -30,7 +30,13 @@ export default function Login () {
         setValues((prev) => ({ ...prev, [event.target.name]: event.target.value }));
     }
 
-    const handleSubmit = (event) => { 
+    const handleRadioChange = (value) => {
+        setRadioValue(value);
+        setValues((prev) => ({ ...prev, source: value }));
+    };
+
+    const handleSubmit = (event) => {
+
         event.preventDefault();
         setErrors(Validation(values));
 
@@ -43,7 +49,7 @@ export default function Login () {
             if (res.data === "Success") {
                 navigate(`/${radioValue}Home`);
             } else {
-                alert("No record found -- try to login again or select the correct user.");
+                alert("No matching user found - please try again.");
             }
         })
         .catch(err => console.log(err));
@@ -53,6 +59,7 @@ export default function Login () {
     <div className='d-flex justify-content-center align-items-center bg-primary vh-100'>
         <div className='bg-white p-3 rounded w-25'>
             <h2>Sign-In</h2>
+            <h3>{radioValue}</h3>
 
             <form action="" onSubmit={handleSubmit}>
                 <div className='mb-3'>
@@ -79,7 +86,8 @@ export default function Login () {
                         name="radio"
                         value={radio.value}
                         checked={radioValue === radio.value}
-                        onChange={(e) => setRadioValue(e.currentTarget.value)}
+                        // onChange={(e) => setRadioValue(e.currentTarget.value)}
+                        onChange={() => handleRadioChange(radio.value)}
                     >
                         {radio.name}
                     </ToggleButton>
