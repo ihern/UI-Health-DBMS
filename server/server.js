@@ -47,10 +47,13 @@ app.get('/nurse_dashboard', (req, res) => {
    res.send("Hello nurse!");
 });
 
-app.get('/patient_dashboard', (req, res) => {
+app.post('/patient_dashboard', (req, res) => {
 
-   const sql = "SELECT * FROM Patient WHERE ssn= ?";
-   dataBase.query(sql,[req.data.ssn], (err, data) => { 
+   // THIS SHOULD OUTPUT AN EMAIL
+   console.log(`\n\nUser query params: [${req.body}`);
+
+   const sql = "SELECT * FROM Patient WHERE `email`= ?";
+   dataBase.query(sql,[req.body.emailData], (err, data) => { 
       if (err) {
          return res.json("Error retrieving data");
       }
