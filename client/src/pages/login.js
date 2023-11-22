@@ -39,7 +39,7 @@ export default function Login () {
 
         event.preventDefault();
         setErrors(Validation(values));
-
+        
         // Posting data to UI-Health database
         Axios.post("http://localhost:4000/login", values)
         .then(res => {
@@ -47,7 +47,11 @@ export default function Login () {
             // TODO: add conditions here to check for admin, nurse and return values from radio value?
             //       to control which home page they are redirected to? have each homepage have specific table views?
             if (res.data === "Success") {
-                navigate(`/${radioValue}Home`);
+                navigate(`/${radioValue}Home`, {
+                    state: {
+                        emailVal: values.email
+                    }
+                });
             } else {
                 alert("No matching user found - please try again.");
             }

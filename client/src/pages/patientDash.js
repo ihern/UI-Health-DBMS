@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-// import Axios from 'axios'
+import React, { useEffect, useState } from 'react';
+import Axios from 'axios'
+import { useLocation } from 'react-router-dom';
 
 export default function Patient () {
+
+  const location = useLocation();
+
+  const emailData = location.state && location.state.emailVal;
 
   const [fname, setFName] = useState('');
   const [mi, setMI] = useState('');
@@ -17,31 +22,33 @@ export default function Patient () {
   // const ssn = 90;
   // Send email from login and use it to query patient data
 
-  // useEffect ((e) => {
-  //   e.preventDefault();
+  useEffect (() => {
 
-  //   Axios.get("http://localhost:4000/patient_dashboard", email)
-  //       .then(res => {
+    console.log(emailData);
+    // e.preventDefault();
 
-  //           if (res.data > 0 ) {
-  //             console.log("Hey");
-  //             setFName();
-  //             setMI(); 
-  //             setLName(); 
-  //             setAddress();
-  //             setPhoneNum();
-  //             setRace();
-  //             setHistory();
-  //             setGender();
-  //             setAge();
-  //             setOccupation();
-  //             setEmail();
-  //           } else {
-  //             console.log("ERROOOORRRRRRRRRR");
-  //           }
-  //       })
-  //       .catch(err => console.log(err));
-  // },[]);
+    Axios.post("http://localhost:4000/patient_dashboard", {email: emailData})
+        .then(res => {
+
+            if (res.data > 0 ) {
+              console.log("Hey");
+              setFName();
+              setMI(); 
+              setLName(); 
+              setAddress();
+              setPhoneNum();
+              setRace();
+              setHistory();
+              setGender();
+              setAge();
+              setOccupation();
+              setEmail();
+            } else {
+              console.log("ERROOOORRRRRRRRRR");
+            }
+        })
+        .catch(err => console.log(err));
+  },[emailData]);
   
   return (
     <div className="container">
