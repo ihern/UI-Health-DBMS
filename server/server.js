@@ -72,10 +72,11 @@ app.post('/register', (req, res) => {
    ];
 
    // Query and values for 'postLogin'
-   const postLogin = "INSERT INTO login (`email`, `password`) VALUES (?, ?)";
+   const postLogin = "INSERT INTO login (`email`, `password`, `source`) VALUES (?, ?, ?)";
    const postLoginValues = [
       req.body.email,
       req.body.password,
+      'patient'
    ];
 
    // This query will store a new patient's data into 'patient' table
