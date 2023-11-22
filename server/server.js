@@ -48,6 +48,19 @@ app.get('/nurse_dashboard', (req, res) => {
 });
 
 app.get('/patient_dashboard', (req, res) => {
+
+   const sql = "SELECT * FROM Patient WHERE ssn= ?";
+   dataBase.query(sql,[req.data.ssn], (err, data) => { 
+      if (err) {
+         return res.json("Error retrieving data");
+      }
+      if (data.length > 0) {
+         return res.json(data);
+      } else {
+         return res.json("No return value found");
+      }
+   });
+
    res.send("Hello patient!");
 });
 
