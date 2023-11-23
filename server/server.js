@@ -50,10 +50,10 @@ app.get('/nurse_dashboard', (req, res) => {
 app.post('/patient_dashboard', (req, res) => {
 
    // THIS SHOULD OUTPUT AN EMAIL
-   console.log(`\n\nUser query params: [${req.body}`);
+   console.log(`\n\nUser query params: ${req.body.emailD}`);
 
    const sql = "SELECT * FROM Patient WHERE `email`= ?";
-   dataBase.query(sql,[req.body.emailData], (err, data) => { 
+   dataBase.query(sql,[req.body.emailD], (err, data) => { 
       if (err) {
          return res.json("Error retrieving data");
       }
@@ -63,8 +63,6 @@ app.post('/patient_dashboard', (req, res) => {
          return res.json("No return value found");
       }
    });
-
-   res.send("Hello patient!");
 });
 
 app.post('/register', (req, res) => {

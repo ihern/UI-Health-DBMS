@@ -27,22 +27,23 @@ export default function Patient () {
     console.log(emailData);
     // e.preventDefault();
 
-    Axios.post("http://localhost:4000/patient_dashboard", {email: emailData})
+    Axios.post("http://localhost:4000/patient_dashboard", {emailD: emailData})
         .then(res => {
-
-            if (res.data > 0 ) {
-              console.log("Hey");
-              setFName();
-              setMI(); 
-              setLName(); 
-              setAddress();
-              setPhoneNum();
-              setRace();
-              setHistory();
-              setGender();
-              setAge();
-              setOccupation();
-              setEmail();
+            console.log(res.data);
+            if (res.data) {
+              const info = res.data[0]; 
+              console.log(info.fname);
+              setFName(info.fname);
+              setMI(info.mi); 
+              setLName(info.lname); 
+              setAddress(info.address);
+              setPhoneNum(info.phone_number);
+              setRace(info.race);
+              setHistory(info.medical_history);
+              setGender(info.gender);
+              setAge(info.age);
+              setOccupation(info.occupation_class);
+              setEmail(info.email);
             } else {
               console.log("ERROOOORRRRRRRRRR");
             }
@@ -89,10 +90,10 @@ export default function Patient () {
                 <form>
                   <div className="form-group my-2">
                     <label>First Name</label>
-                    <input value={fname} onChange={(e) => setFName(e.target.value)} type="text" className="form-control" id="fullName" aria-describedby="firstName"/>
+                    <input value={fname} onChange={(e) => setFName(e.target.value)} type="text" className="form-control" id="fullName"/>
                   
                     <label>MI</label>
-                    <input value={mi} onChange={(e) => setMI(e.target.value)} type="text" className="form-control width: 10px" id="MI" aria-describedby="fullNameHelp"/>
+                    <input value={mi} onChange={(e) => setMI(e.target.value)} type="text" className="form-control width: 10px" id="MI"/>
                   
                     <label>Last Name</label>
                     <input value={lname} onChange={(e) => setLName(e.target.value)} type="text" className="form-control" id="lastName" />
@@ -116,7 +117,7 @@ export default function Patient () {
                     <input value={history} onChange={(e) => setHistory(e.target.value)} type="text" className="form-control" id="history"/>
 
                     <label>Occupation</label>
-                    <input value={occupation} onChange={(e) =>setOccupation (e.target.value)} type="text" className="form-control" id="history"/>
+                    <input value={occupation} onChange={(e) =>setOccupation (e.target.value)} type="text" className="form-control" id="occupation"/>
                     
                     <label>Vaccine Time</label>
                     <input type="text" className="form-control" id="vaccine"/>
@@ -126,7 +127,6 @@ export default function Patient () {
                     All of the fields on this page should be updated to be the most accurate.
                   </div>
                   <button type="button" className="btn btn-primary">Update Profile</button>
-                  <button type="reset" className="btn btn-light mx-2">Reset Changes</button>
                 </form>
               </div>
             </div>
