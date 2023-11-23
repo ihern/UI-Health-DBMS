@@ -62,25 +62,25 @@ export default function Register () {
   return (
     <div className='d-flex justify-content-center align-items-center bg-primary vh-200'>
         <div className='bg-white p-3 rounded w-25'>
-            <h2>Register Patient</h2>
+            <h3>Register Patient</h3>
             <form action="" onSubmit={handleSubmit}>
                 
                 <div className='mb-3'>
                     <label htmlFor='fname'><strong>First Name</strong></label>
-                    <input type='name' placeholder='Enter First Name' name='fname'
+                    <input type='text' placeholder='Enter First Name' name='fname'
                     onChange={handleInput} className='form-control rounded-0'/>
                     {errors.fname && <span className='text-danger'> {errors.fname}</span>}
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='mi'><strong>Middle Name</strong></label>
-                    <input type='name' placeholder='Enter Middle Name' name='mi'
+                    <input type='text' placeholder='Enter Middle Name' name='mi'
                     onChange={handleInput} className='form-control rounded-0'/>
                 </div>
 
                 <div className='mb-3'>
                     <label htmlFor='lname'><strong>Last Name</strong></label>
-                    <input type='name' placeholder='Enter Last Name' name='lname'
+                    <input type='text' placeholder='Enter Last Name' name='lname'
                     onChange={handleInput} className='form-control rounded-0'/>
                     {errors.lname && <span className='text-danger'> {errors.lname}</span>}
                 </div>

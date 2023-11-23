@@ -9,7 +9,11 @@ const PORT = process.env.PORT || 4000;
 
 
 var corsOptions = {
-   origin: ["http://localhost:3000", "http://localhost:3000/register"]
+   origin: [
+      "http://localhost:3000", 
+      "http://localhost:3000/register",
+      "http://localhost:3000/createNurse"
+   ]
  };
  
 app.use(cors(corsOptions));
@@ -119,10 +123,10 @@ app.post('/register', (req, res) => {
 
 app.post('/registerNurse', (req, res) => {
 
-   // Query and values for 'postPatient'
+   // Query and values for 'postNurse'
    const postNurse = "INSERT INTO nurse (`employee_id`, `fname`, `mi`, `lname`, `address`, `phone_number`, `gender`, `age`, `email`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
    const postNurseValues = [
-      req.body.ssn,
+      req.body.employee_id,
       req.body.fname,
       req.body.mi,
       req.body.lname,
@@ -142,7 +146,7 @@ app.post('/registerNurse', (req, res) => {
       'nurse'
    ];
 
-   // This query will store a new patient's data into 'patient' table
+   // This query will store a new nurse's data into 'nurse' table
    dataBase.query(postNurse, postNurseValues, (err, data) => {
       if (err) {
          console.error(err);
@@ -152,7 +156,7 @@ app.post('/registerNurse', (req, res) => {
       return res.status(200).json(data);
    });
 
-   // This query will store a new patient's data into 'login' table
+   // This query will store a new nurse's data into 'login' table
    dataBase.query(postLogin, postLoginValues, (err, data) => {
       if (err) {
          console.error(err);
