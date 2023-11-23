@@ -17,7 +17,7 @@ app.use(cors(corsOptions));
 // app.use(cors());
 app.use(express.json());
 
-// app.use(bodyParser.json());
+app.use(bodyParser.json());
 
 // Creating database connection
 const dataBase = mysql.createConnection({
@@ -100,7 +100,7 @@ app.post('/register', (req, res) => {
       if (err) {
          console.error(err);
          return res.status(500).json({ error: "An error occurred" });
-      }
+      }  
 
       return res.status(200).json(data);
    });
@@ -117,6 +117,10 @@ app.post('/register', (req, res) => {
 
 });
 
+// app.post('/registerNurse', (req, res) = {
+
+// });
+
 app.post('/login', (req, res) => {
    // Displaying query parameters
    console.log(`\n\nUser query params: [${req.body.email}, ${req.body.password}, ${req.body.source}]`);
@@ -129,40 +133,19 @@ app.post('/login', (req, res) => {
       console.log("Query result:", data);
       
       if (err) {
-         return res.json("Error");
+         console.error("Database error:", err);
+         return res.status(500).json("Error"); // Send a 500 Internal Server Error response
       }
 
       if (data.length > 0) {
          console.log("Successful login.");
          return res.json("Success");
       } else {
-         console.log("Failed login.")
-         return res.json("Failed");
+         console.log("Failed login.");
+         return;
       }
    });
 });
-
-// app.post('/login', (req, res) => {
-//    const sql = "SELECT * FROM login WHERE `email` = ? AND `password` = ?";
-//    dataBase.query(sql, [req.body.email, req.body.password], (err, data) => {
-//       if (err) {
-//          return res.json("Error");
-//       }
-
-//       if (data.length > 0) {
-//          const userSource = data[0].source;
-//          if (userSource === req.body.source) {
-//             return res.json("Success");
-//          } else {
-//             return res.json("Failed: Source does not match.");
-//          }
-//       } else {
-//          return res.json("Failed");
-//       }
-//    });
-// });
-
-
 
 app.listen(PORT, () => {
    console.log(`Server Running on Port ${PORT}`);
