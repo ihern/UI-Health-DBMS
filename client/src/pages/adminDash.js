@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 export default function Admin () {
 
@@ -8,22 +8,25 @@ export default function Admin () {
 
   const emailData = location.state && location.state.emailVal;
 
-  const [fname, setFName] = useState('');
-  const [mi, setMI] = useState('');
-  const [lname, setLName] = useState('');
-  const [address, setAddress] = useState('');
-  const [phoneNum, setPhoneNum] = useState('');
-  const [race, setRace] = useState('');
-  const [history, setHistory] = useState('');
-  const [gender, setGender] = useState('');
-  const [age, setAge] = useState('');
-  const [occupation, setOccupation] = useState('');
-  const [email, setEmail] = useState('');
+  // const [fname, setFName] = useState('');
+  // const [mi, setMI] = useState('');
+  // const [lname, setLName] = useState('');
+  // const [address, setAddress] = useState('');
+  // const [phoneNum, setPhoneNum] = useState('');
+  // const [race, setRace] = useState('');
+  // const [history, setHistory] = useState('');
+  // const [gender, setGender] = useState('');
+  // const [age, setAge] = useState('');
+  // const [occupation, setOccupation] = useState('');
+  // const [email, setEmail] = useState('');
   
   return (
     <div className="container">
       <hr/>
-      <h2 className="breadcrumb">Admin Dashboard</h2>
+      <h3 className="breadcrumb">Admin Dashboard</h3>
+      <div className='d-flex justify-content-end'>
+            <Link className='btn btn-success' to='/createNurse'>Add Nurse</Link>
+        </div>
       <hr/>
       <div className="row gutters-sm">
         <div className="col-md-4 d-none d-md-block">

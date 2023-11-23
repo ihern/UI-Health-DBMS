@@ -117,9 +117,51 @@ app.post('/register', (req, res) => {
 
 });
 
-// app.post('/registerNurse', (req, res) = {
+app.post('/registerNurse', (req, res) => {
 
-// });
+   // Query and values for 'postPatient'
+   const postNurse = "INSERT INTO nurse (`employee_id`, `fname`, `mi`, `lname`, `address`, `phone_number`, `gender`, `age`, `email`, `password`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+   const postNurseValues = [
+      req.body.ssn,
+      req.body.fname,
+      req.body.mi,
+      req.body.lname,
+      req.body.address,
+      req.body.phone_number,
+      req.body.gender,
+      req.body.age,
+      req.body.email,
+      req.body.password
+   ];
+
+   // Query and values for 'postLogin'
+   const postLogin = "INSERT INTO login (`email`, `password`, `source`) VALUES (?, ?, ?)";
+   const postLoginValues = [
+      req.body.email,
+      req.body.password,
+      'nurse'
+   ];
+
+   // This query will store a new patient's data into 'patient' table
+   dataBase.query(postNurse, postNurseValues, (err, data) => {
+      if (err) {
+         console.error(err);
+         return res.status(500).json({ error: "An error occurred" });
+      }  
+
+      return res.status(200).json(data);
+   });
+
+   // This query will store a new patient's data into 'login' table
+   dataBase.query(postLogin, postLoginValues, (err, data) => {
+      if (err) {
+         console.error(err);
+         return res.status(500).json({ error: "An error occurred" });
+      }
+
+      return res.status(200).json(data);
+   });
+});
 
 app.post('/login', (req, res) => {
    // Displaying query parameters
