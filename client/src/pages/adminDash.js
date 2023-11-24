@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios'
-import { useLocation, Link } from 'react-router-dom';
+import axios from 'axios'
+import { Link } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
+import '../styles.css';
+
 
 export default function Admin () {
 
-  const location = useLocation();
+  const scrollableTableStyle = {
+    maxHeight: '400px',
+    overflowY: 'auto',
+  };
 
-  const emailData = location.state && location.state.emailVal;
-
-  // const [fname, setFName] = useState('');
-  // const [mi, setMI] = useState('');
-  // const [lname, setLName] = useState('');
-  // const [address, setAddress] = useState('');
-  // const [phoneNum, setPhoneNum] = useState('');
-  // const [race, setRace] = useState('');
-  // const [history, setHistory] = useState('');
-  // const [gender, setGender] = useState('');
-  // const [age, setAge] = useState('');
-  // const [occupation, setOccupation] = useState('');
-  // const [email, setEmail] = useState('');
+  const [data, setData] = useState([])
+  useEffect(() => {
+    axios.get('/nurses')
+    .then((res) => {
+      setData(res.data)
+    })
+    .catch((err) => console.log(err))
+  }, [])
   
   return (
     <div className="container">
@@ -65,11 +66,42 @@ export default function Admin () {
               </ul>
             </div>
 
-            <div className="card-body tab-content">
+            <div className="card-body tab-content max-height: 10px">
               <div className="tab-pane active" id="nurse">
                 <h6>Nurse Information</h6>
                 <hr/>
-                
+
+                  <Table striped bordered size="sm" className='scrollable-table'>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Middle Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Phone Number</th>
+                        <th>Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        data.map((nurse) => {
+                          return (<tr>
+                            <td>{nurse.employee_id}</td>
+                            <td>{nurse.fname}</td>
+                            <td>{nurse.mi}</td>
+                            <td>{nurse.lname}</td>
+                            <td>{nurse.age}</td>
+                            <td>{nurse.gender}</td>
+                            <td>{nurse.phone_number}</td>
+                            <td>{nurse.address}</td>
+                          </tr>)
+                        })
+                      }
+                    </tbody>
+                  </Table>
+
               </div>
             </div>
 

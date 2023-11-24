@@ -13,6 +13,7 @@ var corsOptions = {
       "http://localhost:3000", 
       "http://localhost:3000/register",
       "http://localhost:3000/createNurse"
+      ,"http://localhost:3000/adminHome"
    ]
  };
  
@@ -71,6 +72,7 @@ app.post('/patient_dashboard', (req, res) => {
    res.send("Hello patient!");
 });
 
+// This query will register a patient
 app.post('/register', (req, res) => {
    
    // Query and values for 'postPatient'
@@ -121,6 +123,7 @@ app.post('/register', (req, res) => {
 
 });
 
+// This query will register a nurse
 app.post('/registerNurse', (req, res) => {
 
    // Query and values for 'postNurse'
@@ -166,6 +169,15 @@ app.post('/registerNurse', (req, res) => {
       return res.status(200).json(data);
    });
 });
+
+// This query will get all of the registered nurses
+app.get('/nurses', (req, res) => {
+   const getNurses = "SELECT * FROM nurse";
+   dataBase.query(getNurses, (err, result) => {
+      if (err) return res.json({"message":"Server error"})
+      return res.json(result);
+   })
+})
 
 app.post('/login', (req, res) => {
    // Displaying query parameters
