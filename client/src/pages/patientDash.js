@@ -50,6 +50,21 @@ export default function Patient () {
         })
         .catch(err => console.log(err));
   },[emailData]);
+
+
+  const updateInfo = () => {
+    const updatedData = [ fname, mi, lname, address, phoneNum, race, gender, age,history, occupation, email];
+    console.log(updatedData);
+    Axios.post("http://localhost:4000/patient_update", updatedData)
+        .then(res => {
+            if (res.data) {
+              console.log("Update successful")
+            } else {
+              console.log("Did not update correctly");
+            }
+        })
+        .catch(err => console.log(err));
+  }
   
   return (
     <div className="container">
@@ -126,7 +141,7 @@ export default function Patient () {
                   <div className="form-group small text-muted my-2">
                     All of the fields on this page should be updated to be the most accurate.
                   </div>
-                  <button type="button" className="btn btn-primary">Update Profile</button>
+                  <button type="button" className="btn btn-primary" onClick={updateInfo}>Update Profile</button>
                 </form>
               </div>
             </div>

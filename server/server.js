@@ -65,6 +65,38 @@ app.post('/patient_dashboard', (req, res) => {
    });
 });
 
+app.post('/patient_update', (req, res) => {
+
+   // THIS SHOULD OUTPUT AN EMAIL
+   console.log(`\n\Updated user query params: ${req.body[10]}`);
+
+   const sql = 'UPDATE Patient SET `fname` = ?, `mi` = ?, `lname` = ?, `address` = ?, `phone_number` = ?, `race`= ?, `gender`=?, `age`= ?, `medical_history` = ?, `occupation_class` = ? WHERE email = ?';
+   const patientUpdatedValues = [
+      req.body[0],
+      req.body[1],
+      req.body[2],
+      req.body[3],
+      req.body[4],
+      req.body[5],
+      req.body[6],
+      req.body[7],
+      req.body[8],
+      req.body[9],
+      req.body[10]
+   ];
+   
+   dataBase.query(sql, patientUpdatedValues, (err, data) => { 
+      if (err) {
+         return res.json("Error retrieving data");
+      }
+      if (data.length > 0) {
+         return res.json("Update Successful");
+      } else {
+         return res.json("No data updates: Error");
+      }
+   });
+});
+
 app.post('/register', (req, res) => {
    
    // Query and values for 'postPatient'
