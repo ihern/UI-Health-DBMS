@@ -195,11 +195,10 @@ app.get('/get_nurse/:id', (req, res) => {
 });
 
 // This query will edit the specified registered nurse
-app.get('/edit_nurse/:id', (req, res) => {
+app.post('/edit_nurse/:id', (req, res) => {
    const id = req.params.id;
-   const editNurse = "UPDATE nurse SET `employee_id`=?, `fname`=?, `mi`=?, `lname`=?, `address`=?, `phone_number`=?, `gender`=?, `age`=?, `email`=?, `password`=? WHERE id=?";
+   const editNurse = "UPDATE nurse SET `fname`=?, `mi`=?, `lname`=?, `address`=?, `phone_number`=?, `gender`=?, `age`=?, `email`=?, `password`=? WHERE `employee_id`=?";
    const editNurseValues = [
-      req.body.employee_id,
       req.body.fname,
       req.body.mi,
       req.body.lname,

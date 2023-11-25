@@ -23,7 +23,7 @@ function EditNurse() {
     e.preventDefault();
 
     axios
-      .post(`http://localhost:4000/edit_nurse/${id}`, data[0])
+      .post(`/edit_nurse/${id}`, data[0])
       .then((res) => {
         navigate("/adminHome");
         console.log(res);
@@ -69,14 +69,14 @@ function EditNurse() {
               } />
             </div>
 
-            <div className='mb-3'>
+            {/* <div className='mb-3'>
               <label htmlFor='employee_id'><strong>Employee ID</strong></label>
               <input type='text' name='employee_id' className='form-control rounded-0' 
               value={nurse.employee_id} 
               onChange={(e) =>
                     setData([{ ...data[0], employee_id: e.target.value }])
                   } />
-            </div>
+            </div> */}
 
             <div className='mb-3'>
               <label htmlFor='address'><strong>Address</strong></label>
