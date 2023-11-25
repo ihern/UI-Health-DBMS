@@ -12,8 +12,8 @@ var corsOptions = {
    origin: [
       "http://localhost:3000", 
       "http://localhost:3000/register",
-      "http://localhost:3000/createNurse"
-      ,"http://localhost:3000/adminHome"
+      "http://localhost:3000/createNurse",
+      "http://localhost:3000/adminHome"
    ]
  };
  
@@ -118,7 +118,7 @@ app.post('/register', (req, res) => {
          return res.status(500).json({ error: "An error occurred" });
       }
 
-      return res.status(200).json(data);
+      // return res.status(200).json(data);
    });
 
 });
@@ -156,6 +156,7 @@ app.post('/registerNurse', (req, res) => {
          return res.status(500).json({ error: "An error occurred" });
       }  
 
+      console.log("\nRegistered nurse...\n")
       return res.status(200).json(data);
    });
 
@@ -166,18 +167,59 @@ app.post('/registerNurse', (req, res) => {
          return res.status(500).json({ error: "An error occurred" });
       }
 
-      return res.status(200).json(data);
+      // return res.status(200).json(data);
    });
 });
 
 // This query will get all of the registered nurses
 app.get('/nurses', (req, res) => {
+   
    const getNurses = "SELECT * FROM nurse";
    dataBase.query(getNurses, (err, result) => {
       if (err) return res.json({"message":"Server error"})
+      console.log("Fetching nurses...\n");
       return res.json(result);
    })
-})
+});
+
+// This query will get the specified registered nurse
+app.get('/get_nurse/:id', (req, res) => {
+   const id = req.params.id;
+   const getNurse = "SELECT * FROM nurse WHERE `employee_id` = ?";
+   dataBase.query(getNurse, [id], (err, result) => {
+      if (err) return res.json({"message":"Server error"})
+
+      console.log("Fetching nurse...\n");
+      return res.json(result);
+   })
+});
+
+// This query will edit the specified registered nurse
+app.get('/edit_nurse/:id', (req, res) => {
+   const id = req.params.id;
+   const editNurse = "UPDATE nurse SET `employee_id`=?, `fname`=?, `mi`=?, `lname`=?, `address`=?, `phone_number`=?, `gender`=?, `age`=?, `email`=?, `password`=? WHERE id=?";
+   const editNurseValues = [
+      req.body.employee_id,
+      req.body.fname,
+      req.body.mi,
+      req.body.lname,
+      req.body.address,
+      req.body.phone_number,
+      req.body.gender,
+      req.body.age,
+      req.body.email,
+      req.body.password,
+      id
+   ];
+
+   dataBase.query(editNurse, editNurseValues, (err, result) => {
+      if (err)
+         return res.json({ message: "Something unexpected has occurred" + err });
+
+      console.log("Updated nurse...\n");
+      return res.json({ success: "Nurse updated successfully" });
+   })
+});
 
 app.post('/login', (req, res) => {
    // Displaying query parameters

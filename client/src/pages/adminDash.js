@@ -2,15 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 import '../styles.css';
 
 
 export default function Admin () {
-
-  const scrollableTableStyle = {
-    maxHeight: '400px',
-    overflowY: 'auto',
-  };
 
   const [data, setData] = useState([])
   useEffect(() => {
@@ -71,7 +67,7 @@ export default function Admin () {
                 <h6>Nurse Information</h6>
                 <hr/>
 
-                  <Table striped bordered size="sm" className='scrollable-table'>
+                  <Table striped size="sm">
                     <thead>
                       <tr>
                         <th>ID</th>
@@ -96,6 +92,15 @@ export default function Admin () {
                             <td>{nurse.gender}</td>
                             <td>{nurse.phone_number}</td>
                             <td>{nurse.address}</td>
+                            <td>
+                              <Link className='btn btn-success' to={`/readNurse/${nurse.employee_id}`}>Read</Link>
+                            </td>
+                            <td>
+                              <Link className='btn btn-success' to={`/editNurse/${nurse.employee_id}`}>Edit</Link>
+                            </td>
+                            <td>
+                              <Button className='btn btn-danger'>Delete</Button>
+                            </td>
                           </tr>)
                         })
                       }
