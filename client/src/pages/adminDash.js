@@ -9,13 +9,30 @@ import '../styles.css';
 export default function Admin () {
 
   const [data, setData] = useState([])
+  const [deleted, setDeleted] = useState(true)
+
   useEffect(() => {
+
+    // This condition will check for deleted users and update data dynamically
+    if (deleted) {
+      setDeleted(false)
+    }
+
+    // This request will fetch all nurses
     axios.get('/nurses')
     .then((res) => {
       setData(res.data)
     })
     .catch((err) => console.log(err))
-  }, [])
+  }, [deleted])
+
+  function handleDelete(id){
+    axios.delete(`/delete_nurse/${id}`)
+    .then((res)=>{
+        setDeleted(true)
+    })
+    .catch((err)=> console.log(err))
+}
   
   return (
     <div className="container">
@@ -99,7 +116,7 @@ export default function Admin () {
                               <Link className='btn btn-success' to={`/editNurse/${nurse.employee_id}`}>Edit</Link>
                             </td>
                             <td>
-                              <Button className='btn btn-danger'>Delete</Button>
+                              <Button onClick={() => handleDelete(nurse.employee_id)} className='btn btn-danger'>Delete</Button>
                             </td>
                           </tr>)
                         })

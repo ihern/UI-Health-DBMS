@@ -220,6 +220,21 @@ app.post('/edit_nurse/:id', (req, res) => {
    })
 });
 
+// This query will delete the specified registered nurse
+app.delete('/delete_nurse/:id', (req, res) => {
+   const id = req.params.id;
+   const deleteNurse = "DELETE FROM nurse WHERE `employee_id`=?";
+   const value = [id];
+
+   dataBase.query(deleteNurse, value, (err, result) => {
+      if (err)
+         return res.json({ message: "Something unexpected has occurred" + err });
+
+      console.log("Deleted nurse...\n");
+      return res.json({ success: "Nurse deleted successfully" });
+   })
+});
+
 app.post('/login', (req, res) => {
    // Displaying query parameters
    console.log(`\n\nUser query params: [${req.body.email}, ${req.body.password}, ${req.body.source}]`);
