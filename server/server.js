@@ -72,6 +72,28 @@ app.post('/patient_dashboard', (req, res) => {
    res.send("Hello patient!");
 });
 
+// This query will fetch all patients
+app.get('/get_patients', (req, res) => {
+   const getPatients = "SELECT * FROM patient";
+   dataBase.query(getPatients, (err, result) => {
+      if (err) return res.json({"message":"Server error"})
+      console.log("Fetching patients...\n");
+      return res.json(result);
+   })
+});
+
+// This query will fetch the specified patient
+app.get('/get_patient/:id', (req, res) => {
+   const id = req.params.id;
+   const getPatient = "SELECT * FROM patient WHERE `ssn` = ?";
+   dataBase.query(getPatient, [id], (err, result) => {
+      if (err) return res.json({"message":"Server error"})
+
+      console.log("Fetching patient...\n");
+      return res.json(result);
+   })
+});
+
 // This query will register a patient
 app.post('/register', (req, res) => {
    
@@ -172,7 +194,7 @@ app.post('/registerNurse', (req, res) => {
 });
 
 // This query will get all of the registered nurses
-app.get('/nurses', (req, res) => {
+app.get('/get_nurses', (req, res) => {
    
    const getNurses = "SELECT * FROM nurse";
    dataBase.query(getNurses, (err, result) => {
@@ -234,6 +256,22 @@ app.delete('/delete_nurse/:id', (req, res) => {
       return res.json({ success: "Nurse deleted successfully" });
    })
 });
+
+// This query will fetch all of the vaccine data
+app.get('/get_vaccines', (req, res) => {
+
+   const getVaccines = "SELECT * FROM vaccine";
+   dataBase.query(getVaccines, (err, result) => {
+      if (err) return res.json({"message":"Server error"})
+      console.log("Fetching vaccine data...\n");
+      return res.json(result);
+   })
+});
+
+// This query will update the specified vaccine
+app.post('/updateVaccine/:name', (req, res) => {
+   
+})
 
 app.post('/login', (req, res) => {
    // Displaying query parameters

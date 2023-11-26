@@ -8,7 +8,9 @@ import '../styles.css';
 
 export default function Admin () {
 
-  const [data, setData] = useState([])
+  const [nurseData, setNurseData] = useState([])
+  const [patientData, setPatientData] = useState([])
+  const [vaccineData, setVaccineData] = useState([])
   const [deleted, setDeleted] = useState(true)
 
   useEffect(() => {
@@ -19,11 +21,26 @@ export default function Admin () {
     }
 
     // This request will fetch all nurses
-    axios.get('/nurses')
+    axios.get('/get_nurses')
     .then((res) => {
-      setData(res.data)
+      setNurseData(res.data)
     })
     .catch((err) => console.log(err))
+
+    // This request will fetch all nurses
+    axios.get('/get_patients')
+    .then((res) => {
+      setPatientData(res.data)
+    })
+    .catch((err) => console.log(err))
+
+    // This request will fetch vaccine data
+    axios.get('/get_vaccines')
+    .then((res) => {
+      setVaccineData(res.data)
+    })
+    .catch((err) => console.log(err))
+
   }, [deleted])
 
   function handleDelete(id){
@@ -38,9 +55,7 @@ export default function Admin () {
     <div className="container">
       <hr/>
       <h3 className="breadcrumb">Admin Dashboard</h3>
-      <div className='d-flex justify-content-end'>
-            <Link className='btn btn-success' to='/createNurse'>Add Nurse</Link>
-        </div>
+      
       <hr/>
       <div className="row gutters-sm">
         <div className="col-md-4 d-none d-md-block">
@@ -82,6 +97,9 @@ export default function Admin () {
             <div className="card-body tab-content max-height: 10px">
               <div className="tab-pane active" id="nurse">
                 <h6>Nurse Information</h6>
+                <div className='d-flex justify-content-end'>
+                  <Link className='btn btn-success' to='/createNurse'>Add Nurse</Link>
+                </div>
                 <hr/>
 
                   <Table striped size="sm">
@@ -99,7 +117,7 @@ export default function Admin () {
                     </thead>
                     <tbody>
                       {
-                        data.map((nurse) => {
+                        nurseData.map((nurse) => {
                           return (<tr>
                             <td>{nurse.employee_id}</td>
                             <td>{nurse.fname}</td>
@@ -131,6 +149,45 @@ export default function Admin () {
               <div className="tab-pane" id="patient">
                 <h6>Patient Information</h6>
                 <hr/>
+
+                <Table striped size="sm">
+                    <thead>
+                      <tr>
+                        <th>SSN</th>
+                        <th>First Name</th>
+                        <th>Middle Name</th>
+                        <th>Last Name</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Race</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Medical History</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        patientData.map((patient) => {
+                          return (<tr>
+                            <td>{patient.ssn}</td>
+                            <td>{patient.fname}</td>
+                            <td>{patient.mi}</td>
+                            <td>{patient.lname}</td>
+                            <td>{patient.address}</td>
+                            <td>{patient.phone_number}</td>
+                            <td>{patient.race}</td>
+                            <td>{patient.gender}</td>
+                            <td>{patient.age}</td>
+                            <td>{patient.medical_history}</td>
+                            <td>
+                              <Link className='btn btn-success' to={`/readPatient/${patient.ssn}`}>Read</Link>
+                            </td>
+
+                          </tr>)
+                        })
+                      }
+                    </tbody>
+                  </Table>
                 
               </div>
             </div>
@@ -139,6 +196,40 @@ export default function Admin () {
               <div className="tab-pane" id="vaccine">
                 <h6>Vaccine Information</h6>
                 <hr/>
+
+                <Table striped size="sm">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Company Name</th>
+                        <th>Number of Doses</th>
+                        <th>Available</th>
+                        <th>On Hold</th>
+                        <th>Description</th>
+                        <td>
+
+                        </td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {
+                        vaccineData.map((vaccine) => {
+                          return (<tr>
+                            <td>{vaccine.name}</td>
+                            <td>{vaccine.company_name}</td>
+                            <td>{vaccine.number_of_doses}</td>
+                            <td>{vaccine.available}</td>
+                            <td>{vaccine.on_hold}</td>
+                            <td>{vaccine.description}</td>
+                            <td>
+                              <Link className='btn btn-success' to={`/updateVaccine/${vaccine.name}`}>Update</Link>
+                            </td>
+
+                          </tr>)
+                        })
+                      }
+                    </tbody>
+                  </Table>
                 
               </div>
             </div>
