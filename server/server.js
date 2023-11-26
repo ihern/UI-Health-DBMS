@@ -32,26 +32,6 @@ const dataBase = mysql.createConnection({
    database: "ui-health-db"
 });
 
-app.get('/', (req, res) => {
-   res.send("Hello world!");
-});
-
-app.get('/login', (req, res) => {
-   res.send("sup");
-});
-
-app.get('/register', (req, res) => {
-   res.send("beep boop");
-});
-
-app.get('/admin_dashboard', (req, res) => {
-   res.send("Hello admin!");
-});
-
-app.get('/nurse_dashboard', (req, res) => {
-   res.send("Hello nurse!");
-});
-
 app.post('/patient_dashboard', (req, res) => {
 
    // THIS SHOULD OUTPUT AN EMAIL
@@ -287,6 +267,23 @@ app.delete('/delete_nurse/:id', (req, res) => {
    })
 });
 
+// This query will fetch the specified vaccine
+app.get('/get_vaccine/:name', (req, res) => {
+   const name = req.params.name;
+   const getVaccine = "SELECT * FROM vaccine WHERE `name` = ?";
+
+   console.log(`\n\nUser query params: [${req.body}]`);
+   
+   dataBase.query(getVaccine, [name], (err, result) => {
+      if (err) return res.json({"message":"Server error"})
+
+      console.log("Fetching vaccine information...\n");
+      // Logging query result
+      console.log("Query result:", data);
+      return res.json(result);
+   })
+});
+
 // This query will fetch all of the vaccine data
 app.get('/get_vaccines', (req, res) => {
 
@@ -298,10 +295,52 @@ app.get('/get_vaccines', (req, res) => {
    })
 });
 
+// This query will add a vaccine to the 'vaccine' table
+app.post('/addVaccine', (req, res) => {
+
+   const postVaccine = "INSERT INTO vaccine (`name`, `company_name`, `number_of_doses`, `available`, `on_hold`, `description`) VALUES (?, ?, ?, ?, ?, ?)";
+   const postVaccineValues = [
+      req.body.name,
+      req.body.company_name,
+      req.body.number_of_doses,
+      req.body.available,
+      req.body.on_hold,
+      req.body.description
+   ];
+
+   dataBase.query(postVaccine, postVaccineValues, (err, data) => {
+      if (err) {
+         console.error(err);
+         return res.status(500).json({ error: "An error occurred" });
+      }  
+
+      console.log("Adding vaccine...\n");
+      return res.status(200).json(data);
+   });
+});
+
 // This query will update the specified vaccine
-app.post('/updateVaccine/:name', (req, res) => {
-   
-})
+app.post('/update_vaccine/:name', (req, res) => {
+   const name = req.params.id;
+   const updateVaccine = "UPDATE vaccine SET `name`=?, `company_name`=?, `number_of_doses`=?, `available`=?, `on_hold`=?, `description`=? WHERE `name`=?";
+   const updateVaccineValues = [
+      req.body.name,
+      req.body.company_name,
+      req.body.number_of_doses,
+      req.body.available,
+      req.body.on_hold,
+      req.body.description,
+      req.body.name,
+   ];
+
+   dataBase.query(updateVaccine, updateVaccineValues, (err, result) => {
+      if (err)
+         return res.json({ message: "Something unexpected has occurred" + err });
+
+      console.log("Updated vaccine repository...\n");
+      return res.json({ success: "Vaccine updated successfully" });
+   })
+});
 
 app.post('/login', (req, res) => {
    // Displaying query parameters

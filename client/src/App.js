@@ -10,6 +10,7 @@ import ReadNurse from './components/ReadNurse';
 import ReadPatient from './components/ReadPatient';
 import ReadVaccine from './components/ReadVaccine';
 import UpdateVaccine from './components/UpdateVaccine';
+import AddVaccine from "./components/AddVaccine";
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -28,6 +29,7 @@ function App() {
         <Route path='/readPatient/:id' element={<ReadPatient />} />
         <Route path='/readVaccine/:id' element={<ReadVaccine />} />
         <Route path='/updateVaccine/:id' element={<UpdateVaccine />} />
+        <Route path='/addVaccine/' element={<AddVaccine />} />
       </Routes>
     </BrowserRouter>
   );
