@@ -19,36 +19,53 @@ export default function Patient () {
   const [age, setAge] = useState('');
   const [occupation, setOccupation] = useState('');
   const [email, setEmail] = useState('');
-  // const ssn = 90;
-  // Send email from login and use it to query patient data
+  const[ timeSlots] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM', '12/1/23 12:00PM']); 
 
   useEffect (() => {
 
     console.log(emailData);
-    // e.preventDefault();
 
-    Axios.post("http://localhost:4000/patient_dashboard", {email: emailData})
+    Axios.post("http://localhost:4000/patient_dashboard", {emailD: emailData})
         .then(res => {
-
-            if (res.data > 0 ) {
-              console.log("Hey");
-              setFName();
-              setMI(); 
-              setLName(); 
-              setAddress();
-              setPhoneNum();
-              setRace();
-              setHistory();
-              setGender();
-              setAge();
-              setOccupation();
-              setEmail();
+            console.log(res.data);
+            if (res.data) {
+              const info = res.data[0]; 
+              console.log(info.fname);
+              setFName(info.fname);
+              setMI(info.mi); 
+              setLName(info.lname); 
+              setAddress(info.address);
+              setPhoneNum(info.phone_number);
+              setRace(info.race);
+              setHistory(info.medical_history);
+              setGender(info.gender);
+              setAge(info.age);
+              setOccupation(info.occupation_class);
+              setEmail(info.email);
             } else {
               console.log("ERROOOORRRRRRRRRR");
             }
         })
         .catch(err => console.log(err));
+
+        // add a request to get all the time slots from the vaccine_schedule
+
   },[emailData]);
+
+
+  const updateInfo = () => {
+    const updatedData = [ fname, mi, lname, address, phoneNum, race, gender, age,history, occupation, email];
+    console.log(updatedData);
+    Axios.post("http://localhost:4000/patient_update", updatedData)
+        .then(res => {
+            if (res.data) {
+              console.log("Update successful")
+            } else {
+              console.log("Did not update correctly");
+            }
+        })
+        .catch(err => console.log(err));
+  }
   
   return (
     <div className="container">
@@ -61,10 +78,16 @@ export default function Patient () {
             <div className="card-body">
               <nav className="nav flex-column nav-pills nav-gap-y-1">
                 <a href="#profile" data-toggle="tab" className="nav-item nav-link has-icon nav-link-faded active">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user mr-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>Profile Information
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user mr-2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> Profile Information
+                </a>
+                <a href="#vaccine" data-toggle="tab" className="nav-item nav-link has-icon nav-link-faded">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-calendar3" viewBox="0 0 16 16">
+                  <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
+                  <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                </svg> Vaccine Scheduling
                 </a>
                 <a href="#account" data-toggle="tab" className="nav-item nav-link has-icon nav-link-faded">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-settings mr-2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>Account Settings
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-settings mr-2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Account Settings
                 </a>
               </nav>
             </div>
@@ -89,10 +112,10 @@ export default function Patient () {
                 <form>
                   <div className="form-group my-2">
                     <label>First Name</label>
-                    <input value={fname} onChange={(e) => setFName(e.target.value)} type="text" className="form-control" id="fullName" aria-describedby="firstName"/>
+                    <input value={fname} onChange={(e) => setFName(e.target.value)} type="text" className="form-control" id="fullName"/>
                   
                     <label>MI</label>
-                    <input value={mi} onChange={(e) => setMI(e.target.value)} type="text" className="form-control width: 10px" id="MI" aria-describedby="fullNameHelp"/>
+                    <input value={mi} onChange={(e) => setMI(e.target.value)} type="text" className="form-control width: 10px" id="MI"/>
                   
                     <label>Last Name</label>
                     <input value={lname} onChange={(e) => setLName(e.target.value)} type="text" className="form-control" id="lastName" />
@@ -116,17 +139,38 @@ export default function Patient () {
                     <input value={history} onChange={(e) => setHistory(e.target.value)} type="text" className="form-control" id="history"/>
 
                     <label>Occupation</label>
-                    <input value={occupation} onChange={(e) =>setOccupation (e.target.value)} type="text" className="form-control" id="history"/>
-                    
-                    <label>Vaccine Time</label>
-                    <input type="text" className="form-control" id="vaccine"/>
-
+                    <input value={occupation} onChange={(e) =>setOccupation (e.target.value)} type="text" className="form-control" id="occupation"/>
                   </div>
                   <div className="form-group small text-muted my-2">
                     All of the fields on this page should be updated to be the most accurate.
                   </div>
-                  <button type="button" className="btn btn-primary">Update Profile</button>
-                  <button type="reset" className="btn btn-light mx-2">Reset Changes</button>
+                  <button type="button" className="btn btn-primary" onClick={updateInfo}>Update Profile</button>
+                </form>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="tab-pane" id="vaccine">
+                <h6>Vaccination Scheduling</h6>
+                <hr/>
+                <form>
+                  <div className="form-group">
+                    <label>Time</label>
+                    <select className="form-select" aria-label="Default select example" id="appointments">
+                    <option value="" disabled selected>Appointments Available</option>
+                      {timeSlots.map((timeslot, idx) => (
+                        <option
+                            key={idx}
+                            id={`time-${idx}`}
+                            variant="outline-primary"
+                            name="time"
+                            value={timeslot}
+                        >
+                            {timeslot}
+                        </option>
+                        ))}
+                    </select>
+                    <button type="button" className="btn btn-primary my-2" onClick={updateInfo}>Submit</button>
+                  </div>                  
                 </form>
               </div>
             </div>
@@ -136,16 +180,11 @@ export default function Patient () {
                 <hr/>
                 <form>
                   <div className="form-group">
-                    <label htmlFor="username">Email</label>
-                    <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className="form-control" id="email"/>
-                  </div>
-                  <hr/>
-                  <div className="form-group">
-                    <label className="d-block text-danger">Delete Account</label>
-                    <p className="text-muted font-size-sm">Once you delete your account, there is no going back. Please be certain.</p>
-                  </div>
-                  <button className="btn btn-danger" type="button">Delete Account</button>
+                    <label>Email</label>
+                    <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className="form-control" id="email"  disabled/>
+                  </div>                  
                 </form>
+                <hr/>
               </div>
             </div>
           </div>
