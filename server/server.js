@@ -32,6 +32,39 @@ const dataBase = mysql.createConnection({
    database: "ui-health-db"
 });
 
+app.get('/', (req, res) => {
+   res.send("Hello world!");
+});
+
+app.get('/login', (req, res) => {
+   res.send("sup");
+});
+
+app.get('/register', (req, res) => {
+   res.send("beep boop");
+});
+
+app.get('/admin_dashboard', (req, res) => {
+   res.send("Hello admin!");
+});
+
+app.post('/nurse_dashboard', (req, res) => {
+   // THIS SHOULD OUTPUT AN EMAIL
+   console.log(`\n\nUser query params: ${req.body.emailD}`);
+
+   const sql = "SELECT * FROM Nurse WHERE `email`= ?";
+   dataBase.query(sql,[req.body.emailD], (err, data) => { 
+      if (err) {
+         return res.json("Error retrieving data");
+      }
+      if (data.length > 0) {
+         return res.json(data);
+      } else {
+         return res.json("No return value found");
+      }
+   });
+});
+
 app.post('/patient_dashboard', (req, res) => {
 
    // THIS SHOULD OUTPUT AN EMAIL
@@ -338,6 +371,46 @@ app.post('/update_vaccine/:name', (req, res) => {
 
       console.log("Updated vaccine repository...\n");
       return res.json({ success: "Vaccine updated successfully" });
+   })
+});
+
+app.get('/get_schedule', (req, res) => {
+   
+   const sql = "SELECT `time_slot` FROM vaccine_scheduling";
+   dataBase.query(sql, (err, result) => {
+      if (err) return res.json({"message":"Server error getting schedule"})
+      console.log("Fetching schedule...\n");
+      return res.json(result);
+   })
+});
+
+app.get('/get_vaccines_available', (req, res) => {
+   
+   const sql = "SELECT `name` FROM vaccine WHERE `available` > 0 " ;
+   dataBase.query(sql, (err, result) => {
+      if (err) return res.json({"message":"Server error getting vaccines"})
+      console.log("Fetching vaccines...\n");
+      return res.json(result);
+   })
+});
+
+app.post('/get_appointments_patients', (req, res) => {
+   console.log(`\n\nUser ssn: ${req.body.patient}`);
+   const sql = "SELECT `time_slot` FROM vaccine_scheduling_patients WHERE `patient_id` = ?";
+   dataBase.query(sql, [req.body.patient], (err, result) => {
+      if (err) return res.json({"message":"Server error getting matching appointments"})
+      console.log("Fetching matching appointments...\n");
+      return res.json(result);
+   })
+});
+
+app.post('/delete_appointments_patients', (req, res) => {
+   console.log(`\n\nUser ssn: ${req.body[0]}`);
+   const sql = "DELETE FROM vaccine_scheduling_patients WHERE `patient_id` = ? AND `time_slot` = ?";
+   dataBase.query(sql, [req.body[0], req.body[1]], (err, result) => {
+      if (err) return res.json({"message":"Server error getting matching appointments"})
+      console.log("Fetching matching appointments...\n");
+      return res.json(result);
    })
 });
 

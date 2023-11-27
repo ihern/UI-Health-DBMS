@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
 import { useLocation } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+
+
+// TODO 
+// ADD DELETE APPOINTMENT FUNCTIONALITY
+// SET UP THE VACCINE SELECTION
+// 
 
 export default function Patient () {
 
@@ -19,38 +27,65 @@ export default function Patient () {
   const [age, setAge] = useState('');
   const [occupation, setOccupation] = useState('');
   const [email, setEmail] = useState('');
-  const[ timeSlots] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM', '12/1/23 12:00PM']); 
+  const [ssn, setSSN] = useState('');
+  const[ timeSlots, setTimeSlots] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM', '12/1/23 12:00PM']); 
+  const[ vaccines, setVaccines] = useState(['Moderna', 'Pfizer']); 
+  const[ appointments, setAppointments] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM']); 
 
   useEffect (() => {
 
     console.log(emailData);
 
     Axios.post("http://localhost:4000/patient_dashboard", {emailD: emailData})
-        .then(res => {
-            console.log(res.data);
-            if (res.data) {
-              const info = res.data[0]; 
-              console.log(info.fname);
-              setFName(info.fname);
-              setMI(info.mi); 
-              setLName(info.lname); 
-              setAddress(info.address);
-              setPhoneNum(info.phone_number);
-              setRace(info.race);
-              setHistory(info.medical_history);
-              setGender(info.gender);
-              setAge(info.age);
-              setOccupation(info.occupation_class);
-              setEmail(info.email);
-            } else {
-              console.log("ERROOOORRRRRRRRRR");
-            }
-        })
-        .catch(err => console.log(err));
+    .then(res => {
+      console.log(res.data);
+      if (res.data) {
+        const info = res.data[0]; 
+        console.log(info.fname);
+        setFName(info.fname);
+        setMI(info.mi); 
+        setLName(info.lname); 
+        setAddress(info.address);
+        setPhoneNum(info.phone_number);
+        setRace(info.race);
+        setHistory(info.medical_history);
+        setGender(info.gender);
+        setAge(info.age);
+        setOccupation(info.occupation_class);
+        setEmail(info.email);
+        setSSN(info.ssn);
+      } else {
+        console.log("ERROOOORRRRRRRRRR");
+      }
+    })
+    .catch(err => console.log(err));
 
-        // add a request to get all the time slots from the vaccine_schedule
+    // add a request to get all the time slots from the vaccine_schedule
+    Axios.get('/get_schedule')
+    .then((res) => {
+      const timeSlotStrings = res.data.map(timeSlotObj => timeSlotObj.time_slot);
+      console.log('Time slot array: ', timeSlotStrings);
+      setTimeSlots(timeSlotStrings);
+    })
+    .catch((err) => console.log(err));
 
-  },[emailData]);
+    Axios.get('/get_vaccines_available')
+    .then((res) => {
+      const vacs = res.data.map(timeSlotObj => timeSlotObj.name);
+      console.log('Vaccines array: ', vacs);
+      setVaccines(vacs);
+    })
+    .catch((err) => console.log(err));
+    
+    Axios.post('/get_appointments_patients', {patient: ssn})
+    .then((res) => {
+      const appts = res.data.map(apptnObj => apptnObj.time_slot);
+      console.log('Appointments for patient: ', appts);
+      setAppointments(appts);
+    })
+    .catch((err) => console.log(err));
+
+  },[emailData, ssn]);
 
 
   const updateInfo = () => {
@@ -65,8 +100,18 @@ export default function Patient () {
             }
         })
         .catch(err => console.log(err));
-  }
-  
+  };
+
+  const handleDelete = (pSSN, time) => {
+  const appt = [pSSN, time];
+  console.log('inside handleDelete: ', time);
+  Axios.post('/delete_appointments_patients', appt)
+    .then((res) => {
+      console.log('Returning values:');
+    })
+    .catch((err) => console.log(err));
+  };
+
   return (
     <div className="container">
       <hr/>
@@ -150,12 +195,12 @@ export default function Patient () {
             </div>
             <div className="card-body">
               <div className="tab-pane" id="vaccine">
-                <h6>Vaccination Scheduling</h6>
+                <h6>Vaccination Scheduling / Appointments</h6>
                 <hr/>
                 <form>
                   <div className="form-group">
                     <label>Time</label>
-                    <select className="form-select" aria-label="Default select example" id="appointments">
+                    <select className="form-select my-3" aria-label="Default select example" id="appointments">
                     <option value="" disabled selected>Appointments Available</option>
                       {timeSlots.map((timeslot, idx) => (
                         <option
@@ -169,9 +214,51 @@ export default function Patient () {
                         </option>
                         ))}
                     </select>
+                    <select className="form-select my-3" aria-label="Default select example" id="appointments">
+                    <option value="" disabled selected>Vaccines Available</option>
+                      {vaccines.map((vac, idx) => (
+                        <option
+                            key={idx}
+                            id={`time-${idx}`}
+                            variant="outline-primary"
+                            name="time"
+                            value={vac}
+                        >
+                            {vac}
+                        </option>
+                        ))}
+                    </select>
                     <button type="button" className="btn btn-primary my-2" onClick={updateInfo}>Submit</button>
                   </div>                  
                 </form>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="tab-pane" id="account">
+                <h6>Appointments</h6>
+                <hr/>
+                  <Table striped size="sm">
+                    <thead>
+                      <tr>
+                        <th>Time Slot Scheduled</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments.map((timeslot, idx) => (
+                        <tr
+                            key={idx}
+                            id={`time-${idx}`}
+                            variant="outline-primary"
+                            name="time"
+                            value={timeslot}
+                        >
+                            <td>{timeslot}</td>
+                            <td><Button className='btn btn-danger'onClick={() => handleDelete(ssn, timeslot)}>Delete</Button></td>
+                        </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                <hr/>
               </div>
             </div>
             <div className="card-body">
@@ -182,6 +269,8 @@ export default function Patient () {
                   <div className="form-group">
                     <label>Email</label>
                     <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className="form-control" id="email"  disabled/>
+                    <label>SSN</label>
+                    <input value={ssn} onChange={(e) => setSSN(e.target.value)} type="text" className="form-control" id="ssn"  disabled/>
                   </div>                  
                 </form>
                 <hr/>
