@@ -269,17 +269,16 @@ app.delete('/delete_nurse/:id', (req, res) => {
 
 // This query will fetch the specified vaccine
 app.get('/get_vaccine/:name', (req, res) => {
+
    const name = req.params.name;
    const getVaccine = "SELECT * FROM vaccine WHERE `name` = ?";
-
-   console.log(`\n\nUser query params: [${req.body}]`);
    
    dataBase.query(getVaccine, [name], (err, result) => {
+
+      // Error checking
       if (err) return res.json({"message":"Server error"})
 
       console.log("Fetching vaccine information...\n");
-      // Logging query result
-      console.log("Query result:", data);
       return res.json(result);
    })
 });
@@ -321,7 +320,7 @@ app.post('/addVaccine', (req, res) => {
 
 // This query will update the specified vaccine
 app.post('/update_vaccine/:name', (req, res) => {
-   const name = req.params.id;
+   const name = req.params.name;
    const updateVaccine = "UPDATE vaccine SET `name`=?, `company_name`=?, `number_of_doses`=?, `available`=?, `on_hold`=?, `description`=? WHERE `name`=?";
    const updateVaccineValues = [
       req.body.name,
@@ -330,7 +329,7 @@ app.post('/update_vaccine/:name', (req, res) => {
       req.body.available,
       req.body.on_hold,
       req.body.description,
-      req.body.name,
+      name
    ];
 
    dataBase.query(updateVaccine, updateVaccineValues, (err, result) => {
