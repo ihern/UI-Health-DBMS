@@ -19,7 +19,6 @@ function EditNurse() {
   const navigate = useNavigate();
 
   function handleSubmit(e) {
-    console.log("Edit button clicked...\n");
     e.preventDefault();
 
     axios
@@ -34,7 +33,7 @@ function EditNurse() {
   return (
     <div className='d-flex justify-content-center align-items-center bg-primary vh-200'>
       <div className='bg-white p-3 rounded w-25'>
-        <h3>Update Nurse {id}</h3>
+        <h3>Update Nurse: {id}</h3>
         <Link to="/adminHome" className="btn btn-success">
         Back
         </Link>

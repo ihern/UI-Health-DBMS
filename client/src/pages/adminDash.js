@@ -54,7 +54,7 @@ export default function Admin () {
   return (
     <div className="container">
       <hr/>
-      <h3 className="breadcrumb">Admin Dashboard</h3>
+      <h3 className="breadcrumb"><strong>Admin Dashboard</strong></h3>
       
       <hr/>
       <div className="row gutters-sm">
@@ -96,7 +96,7 @@ export default function Admin () {
 
             <div className="card-body tab-content max-height: 10px">
               <div className="tab-pane active" id="nurse">
-                <h6>Nurse Information</h6>
+                <h6><strong>Nurse Information</strong></h6>
                 <div className='d-flex justify-content-end'>
                   <Link className='btn btn-success' to='/createNurse'>Add Nurse</Link>
                 </div>
@@ -131,7 +131,7 @@ export default function Admin () {
                               <Link className='btn btn-success' to={`/readNurse/${nurse.employee_id}`}>Read</Link>
                             </td>
                             <td>
-                              <Link className='btn btn-success' to={`/editNurse/${nurse.employee_id}`}>Edit</Link>
+                              <Link className='btn btn-primary' to={`/editNurse/${nurse.employee_id}`}>Edit</Link>
                             </td>
                             <td>
                               <Button onClick={() => handleDelete(nurse.employee_id)} className='btn btn-danger'>Delete</Button>
@@ -147,7 +147,7 @@ export default function Admin () {
 
             <div className="card-body">
               <div className="tab-pane" id="patient">
-                <h6>Patient Information</h6>
+                <h6><strong>Patient Information</strong></h6>
                 <hr/>
 
                 <Table striped size="sm">
@@ -194,7 +194,10 @@ export default function Admin () {
 
             <div className="card-body">
               <div className="tab-pane" id="vaccine">
-                <h6>Vaccine Information</h6>
+                <h6><strong>Vaccine Information</strong></h6>
+                <div className='d-flex justify-content-end'>
+                  <Link className='btn btn-success' to='/addVaccine'>Add Vaccine</Link>
+                </div>
                 <hr/>
 
                 <Table striped size="sm">
@@ -222,7 +225,7 @@ export default function Admin () {
                             <td>{vaccine.on_hold}</td>
                             <td>{vaccine.description}</td>
                             <td>
-                              <Link className='btn btn-success' to={`/updateVaccine/${vaccine.name}`}>Update</Link>
+                              <Link className='btn btn-primary' to={`/updateVaccine/${vaccine.name}`}>Update</Link>
                             </td>
 
                           </tr>)
