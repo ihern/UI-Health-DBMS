@@ -63,24 +63,25 @@ function ReadNurse() {
         );
       })}
 
-      {scheduleData.map((timeSlot) => {
-        return (
-          <ul className="list-group">
-            <li className="list-group-item">
-              <Table striped size="sm">
-              <thead>
-                <tr>
-                  <th>Scheduled Appointments</th>
+      <ul className="list-group">
+        <li className="list-group-item">
+          <Table striped size="sm">
+            <thead>
+              <tr>
+                <th>Scheduled Appointments</th>
+              </tr>
+            </thead>
+            <tbody className="bg-primary">
+              {scheduleData.map((timeSlot, index) => (
+                <tr key={index}>
+                  <td>{timeSlot.time_slot}</td>
                 </tr>
-              </thead>
-              <tbody className="bg-primary">
-                <td>{timeSlot.time_slot}</td>
-              </tbody>
-            </Table>
-            </li>
-          </ul>
-        );
-      })}
+              ))}
+            </tbody>
+          </Table>
+        </li>
+      </ul>
+
     </div>
   );
 }

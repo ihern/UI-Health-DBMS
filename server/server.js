@@ -48,6 +48,8 @@ app.get('/admin_dashboard', (req, res) => {
    res.send("Hello admin!");
 });
 
+
+
 app.post('/nurse_dashboard', (req, res) => {
    // THIS SHOULD OUTPUT AN EMAIL
    console.log(`\n\nUser query params: ${req.body.emailD}`);
@@ -577,7 +579,35 @@ app.post('/delete_appointments_nurses', (req, res) => {
       if (err) return res.json({"message":"Server error Deleting matching appointments"})
       console.log("Deleting matching appointments...\n");
       return res.json(result);
-   })
+   });
+});
+
+app.post('/add_vaccine_record', (req, res) => {
+   const nurseId = req.body[0];
+   const patientId = req.body[2];
+   const timeSlot = req.body[1];
+   console.log("INSIDE ADD_VAX_RECORD");
+   
+   const getVaccine = "SELECT vaccine FROM vaccine_scheduling WHERE `nurse_id` = ? AND `time_slot` = ? AND `patient_id`=?";
+   const insertRecord = "INSERT INTO vaccine_record (`dose_num`,`nurse_id`, `patient_id`, `vaccine`, `vac_time`) VALUES (?,?,?,?,?)";
+   
+   // This query will fetch the associated vaccine
+   dataBase.query(getVaccine, [nurseId, timeSlot, patientId], (err, result) => {
+      if (err) return res.json({"message":"Server error adding vaccine record..."});
+      
+      const vaccine = result[0].vaccine;
+      console.log(vaccine);
+
+      // This query will insert the vaccine record
+      dataBase.query(insertRecord, [1, nurseId, patientId, vaccine,  timeSlot ], (err, res) => {
+
+         if (err)
+            return res.json({ message: "Something unexpected has occurred" + err });
+
+         console.log("Adding vaccine record...");
+         return res.json("Vaccine record added successfully");
+      });
+   });
 });
 
 // This query will fetch the specified patient's vaccine record
@@ -591,6 +621,8 @@ app.get('/get_vaccine_record/:id', (req, res) => {
       console.log("Fetching patient vaccine record...\n");
       return res.json(result);
    });
+
+
 });
 
 app.post('/patient_vaccine_record', (req, res) => {
