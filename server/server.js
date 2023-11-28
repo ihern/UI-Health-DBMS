@@ -289,16 +289,33 @@ app.post('/edit_nurse/:id', (req, res) => {
 app.delete('/delete_nurse/:id', (req, res) => {
    const id = req.params.id;
    const deleteNurse = "DELETE FROM nurse WHERE `employee_id`=?";
-   const value = [id];
+   const getNurseEmail = "SELECT `email` FROM nurse WHERE `employee_id`=?";
+   const deleteNurseLogin = "DELETE FROM login WHERE `email`=?";
 
-   dataBase.query(deleteNurse, value, (err, result) => {
+   // Step 1: Get the nurse's email
+   dataBase.query(getNurseEmail, [id], (err, result) => {
       if (err)
          return res.json({ message: "Something unexpected has occurred" + err });
 
-      console.log("Deleted nurse...\n");
-      return res.json({ success: "Nurse deleted successfully" });
-   })
+      const nurseEmail = result[0].email;
+
+      // Step 2: Delete from 'login' table using the obtained email
+      dataBase.query(deleteNurseLogin, [nurseEmail], (err, result) => {
+         if (err)
+            return res.json({ message: "Something unexpected has occurred" + err });
+
+         // Step 3: Delete from 'nurse' table
+         dataBase.query(deleteNurse, [id], (err, result) => {
+            if (err)
+               return res.json({ message: "Something unexpected has occurred" + err });
+
+            console.log("Deleting nurse...\n");
+            return res.json({ success: "Nurse deleted successfully" });
+         });
+      });
+   });
 });
+
 
 // This query will fetch the specified vaccine
 app.get('/get_vaccine/:name', (req, res) => {
