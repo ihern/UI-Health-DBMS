@@ -454,6 +454,19 @@ app.post('/delete_appointments_patients', (req, res) => {
    })
 });
 
+// This query will fetch the specified patient's vaccine record
+app.get('/get_vaccine_record/:id', (req, res) => {
+   const id = req.params.id;
+   const getRecord = "SELECT * FROM vaccine_record WHERE `patient_id`=?";
+
+   dataBase.query(getRecord, [id], (err, result) => {
+      if (err) return res.json({"message":"Server error getting schedule"})
+
+      console.log("Fetching patient vaccine record...\n");
+      return res.json(result);
+   });
+});
+
 app.post('/login', (req, res) => {
    // Displaying query parameters
    console.log(`\n\nUser query params: [${req.body.email}, ${req.body.password}, ${req.body.source}]`);
