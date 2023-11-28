@@ -22,6 +22,8 @@ export default function Patient () {
   const [empID, setEmpID] = useState('');
   const[ availability, setAvailability] = useState(''); 
   const[ appointments, setAppointments] = useState([]); 
+  const[ patientIDs, setPatientIDs] = useState([]); 
+  const[ warning, setWarning] = useState(''); 
 
   useEffect (() => {
 
@@ -51,8 +53,10 @@ export default function Patient () {
     Axios.post('/get_appointments_nurses', {nurse: empID})
     .then((res) => {
       const appts = res.data.map(apptnObj => apptnObj.time_slot);
-      console.log('Appointments for nurse: ', appts);
+      const patients = res.data.map(apptnObj => apptnObj.patient_id);
+      console.log('Appointments for nurse: ', appts, patients);
       setAppointments(appts);
+      setPatientIDs(patients);
     })
     .catch((err) => console.log(err));
 
@@ -76,22 +80,43 @@ export default function Patient () {
   const makeAvailable = () => {
     const updatedData = [availability, empID];
     console.log(updatedData);
-    Axios.post("http://localhost:4000/nurse_availability", updatedData)
-    .then(res => {
-        if (res.data) {
-          console.log("Update successful")
-        } else {
-          console.log("Did not update correctly");
+    Axios.post('/nurse_per_hour',  updatedData)
+      .then(res => {
+        if (res.data === 'Yes') {
+          console.log("Slots full", res.data)
+          setWarning('Please select another time slot, this one is full');
+        } 
+        else {
+          setWarning('');
+          Axios.post("http://localhost:4000/nurse_availability", updatedData)
+          .then(resp => {
+              if (resp.data) {
+                console.log("Update successful")
+              } else {
+                console.log("Did not update correctly");
+              }
+          })
+          .catch(errr => console.log(errr));
+          setAvailability('');
         }
-    })
-    .catch(err => console.log(err));
-    setAvailability('');
+      })
+      .catch(err => console.log(err));
   };
 
   const handleDelete = (nID, time) => {
     const appt = [nID, time];
     console.log('Inside handleDelete: ', time);
     Axios.post('/delete_appointments_nurses', appt)
+      .then((res) => {
+        console.log('Returning values:');
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleComplete = (nID, time, pID) => {
+    const appt = [nID, time, pID];
+    console.log('Inside handleComplete: ', appt);
+    Axios.post('/complete_appt', appt)
       .then((res) => {
         console.log('Returning values:');
       })
@@ -177,6 +202,7 @@ export default function Patient () {
                       Please input time available in the exact format  EX: 'M, Feb. 15 2021, 10:00-11:00 am'
                     </div>
                     <input value={availability} onChange={(e) => setAvailability(e.target.value)} placeholder="WEEKDAY LETTER, MON. DD YYYY, HH:00-HH:00 am/pm" type="text" className="form-control" id="schedule"/>
+                    <input value={warning} type="text" className="form-control text-danger" id="error" disabled/>
                     <button type="button" className="btn btn-primary my-2" onClick={makeAvailable}>Submit</button>
                   </div>                  
                 </form>
@@ -190,6 +216,7 @@ export default function Patient () {
                     <thead>
                       <tr>
                         <th>Time Slot Scheduled</th>
+                        <th>Patient</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -202,7 +229,9 @@ export default function Patient () {
                             value={timeslot}
                         >
                             <td>{timeslot}</td>
-                            <td><Button className='btn btn-danger'onClick={() => handleDelete(empID, timeslot)}>Delete</Button></td>
+                            <td>{patientIDs[idx]}</td>
+                            <td><Button className='btn btn-success' onClick={() => handleComplete(empID, timeslot, patientIDs[idx])}>Complete</Button></td>
+                            <td><Button className='btn btn-danger' onClick={() => handleDelete(empID, timeslot)}>Delete</Button></td>
                         </tr>
                         ))}
                     </tbody>

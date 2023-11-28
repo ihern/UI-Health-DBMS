@@ -29,6 +29,7 @@ export default function Patient () {
   const[ apptNurse, setApptNurse] = useState([]); 
   const[ apptTime, setApptTime] = useState([]); 
   const[ apptVax, setApptVax] = useState([]); 
+  const[ warning, setWarning] = useState(''); 
   
 
   useEffect (() => {
@@ -108,17 +109,29 @@ export default function Patient () {
   const makeAppointment = () => {
     const appt = [ apptNurse, ssn, apptTime, apptVax ];
     console.log(appt);
-    Axios.post("http://localhost:4000/patient_select_appt", appt)
-        .then(res => {
-            if (res.data === 'Error') {
-              console.log("Did not make appointment correctly", res.data)
-            } else {
-              console.log("Appointment successful");
-            }
-        })
-        .catch(err => console.log(err));
-    setApptTime('');
-    setApptVax('');
+
+    Axios.post('/patient_per_nurse',  appt)
+      .then(res => {
+        if (res.data === 'Yes') {
+          console.log("Slots full", res.data)
+          setWarning('Please select another time slot, this one is full');
+        } 
+        else {
+          setWarning('');
+          Axios.post("http://localhost:4000/patient_select_appt", appt)
+          .then(resp => {
+              if (resp.data === 'Error') {
+                console.log("Did not make appointment correctly", resp.data)
+              } else {
+                console.log("Appointment successful");
+              }
+          })
+          .catch(errr => console.log(errr));
+          setApptTime('');
+          setApptVax(''); 
+        }
+    })
+    .catch(err => console.log(err));
   };
 
   const handleDelete = (pSSN, time) => {
@@ -250,6 +263,7 @@ export default function Patient () {
                         </option>
                         ))}
                     </select>
+                    <input value={warning} type="text" className="form-control text-danger" id="error" disabled/>
                     <button type="button" className="btn btn-primary my-2" onClick={makeAppointment}>Submit</button>
                   </div>                  
                 </form>
