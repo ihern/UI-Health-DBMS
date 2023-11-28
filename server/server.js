@@ -137,6 +137,18 @@ app.get('/get_patient/:id', (req, res) => {
    })
 });
 
+// This query will get the specified patient's scheduled time slots
+app.get('/get_patient_schedule/:id', (req, res) => {
+   const id = req.params.id;
+   const getSchedule = "SELECT `time_slot` FROM vaccine_scheduling WHERE `patient_id`=?";
+   dataBase.query(getSchedule, [id], (err, result) => {
+      if (err) return res.json({"message":"Server error getting schedule"})
+
+      console.log("Fetching patient schedule...\n");
+      return res.json(result);
+   });
+});
+
 // This query will register a patient
 app.post('/register', (req, res) => {
    
@@ -268,7 +280,7 @@ app.get('/get_nurse_schedule/:id', (req, res) => {
 
       console.log("Fetching nurse schedule...\n");
       return res.json(result);
-   })
+   });
 })
 
 // This query will edit the specified registered nurse

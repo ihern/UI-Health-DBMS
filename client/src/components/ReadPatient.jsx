@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { Link, useParams } from 'react-router-dom';
+import Table from 'react-bootstrap/Table';
+
 function ReadPatient() {
 
   const [data, setData] = useState([])
   const [vaccineData, setVaccineData] = useState([])
+  const [scheduleData, setScheduleData] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -13,6 +16,14 @@ function ReadPatient() {
       setData(res.data)
     })
     .catch((err) => console.log(err))
+
+    // Fetching specific nurse schedule data
+    axios.get(`/get_patient_schedule/${id}`)
+    .then((res) => {
+      setScheduleData(res.data);
+    })
+    .catch((err) => console.log(err));
+
   }, [])
 
   return (
@@ -67,6 +78,26 @@ function ReadPatient() {
           </ul>
         );
       })}
+
+      {scheduleData.map((timeSlot) => {
+        return (
+          <ul className="list-group">
+            <li className="list-group-item">
+              <Table striped size="sm">
+              <thead>
+                <tr>
+                  <th>Scheduled Appointments</th>
+                </tr>
+              </thead>
+              <tbody className="bg-primary">
+                <td>{timeSlot.time_slot}</td>
+              </tbody>
+            </Table>
+            </li>
+          </ul>
+        );
+      })}
+
     </div>
   );
 }
