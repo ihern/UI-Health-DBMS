@@ -113,12 +113,18 @@ export default function Patient () {
       .catch((err) => console.log(err));
   };
 
-  const handleComplete = (nID, time, pID) => {
+  function handleComplete(nID, time, pID) {
+    
     const appt = [nID, time, pID];
     console.log('Inside handleComplete: ', appt);
-    Axios.post('/complete_appt', appt)
-      .then((res) => {
-        console.log('Returning values:');
+    Axios.post('/add_vaccine_record', appt)
+      .then((res) => { 
+          console.log('Client: Adding vaccine record...');
+
+          if (res.data == "Vaccine record added successfully") {
+            handleDelete(nID, time);
+            return;
+          }
       })
       .catch((err) => console.log(err));
   };
