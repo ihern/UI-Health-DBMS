@@ -180,6 +180,47 @@ app.post('/patient_select_appt', (req, res) => {
    });
 });
 
+app.post('/patient_per_nurse', (req, res) => {
+
+   console.log(`\n\Checking patients per nurse constraint: ${req.body[0]}, ${req.body[2]}`);
+   const sql = "SELECT COUNT(*) as count FROM vaccine_scheduling WHERE `nurse_id` = ? AND `time_slot` = ?";
+   const patientUpdatedValues = [
+      req.body[0],
+      req.body[2],
+   ];
+   dataBase.query(sql, patientUpdatedValues, (err, data) => { 
+      if (err) {
+         console.log(err);
+         return res.json("Error");
+      }
+      console.log(data[0].count);
+      if (data[0].count >= 10 ) {
+         return res.json("Yes");
+      }
+      return res.json("Good to go");
+   });
+});
+
+app.post('/nurse_per_hour', (req, res) => {
+
+   console.log(`\n\Checking nurses per hour constraint: ${req.body[0]}`);
+   const sql = "SELECT COUNT(*) as count FROM vaccine_scheduling_nurses WHERE `time_slot` = ?";
+   const patientUpdatedValues = [
+      req.body[0],
+   ];
+   dataBase.query(sql, patientUpdatedValues, (err, data) => { 
+      if (err) {
+         console.log(err);
+         return res.json("Error");
+      }
+      console.log(data[0].count);
+      if (data[0].count >= 12 ) {
+         return res.json("Yes");
+      }
+      return res.json("Good to go");
+   });
+});
+
 // This query will fetch all patients
 app.get('/get_patients', (req, res) => {
    const getPatients = "SELECT * FROM patient";
@@ -471,7 +512,7 @@ app.post('/get_appointments_patients', (req, res) => {
 
 app.post('/get_appointments_nurses', (req, res) => {
    console.log(`\n\nUser employee_id: ${req.body.nurse}`);
-   const sql = "SELECT `time_slot` FROM vaccine_scheduling WHERE `nurse_id` = ?";
+   const sql = "SELECT `time_slot`, `patient_id` FROM vaccine_scheduling WHERE `nurse_id` = ?";
    dataBase.query(sql, [req.body.nurse], (err, result) => {
       if (err) return res.json({"message":"Server error getting matching appointments"})
       console.log("Fetching matching appointments...\n");
