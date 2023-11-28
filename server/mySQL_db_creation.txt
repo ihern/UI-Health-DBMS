@@ -1,0 +1,74 @@
+CREATE TABLE Nurse (
+  employee_id int NOT NULL,
+  fname varchar(30),
+  mi varchar(4),
+  lname varchar(30),
+  address varchar(50),
+  phone_number int,
+  gender varchar(1),
+  age int,
+  PRIMARY KEY (employee_id)
+);
+
+CREATE TABLE Patient (
+  ssn int NOT NULL,
+  fname varchar(30),
+  mi varchar(4),
+  lname varchar(30),
+  address varchar(50),
+  phone_number int,
+  race varchar(20),
+  gender varchar(1),
+  age int,
+  medical_history varchar(100),
+  occupation_class varchar(30),
+  PRIMARY KEY (ssn)
+);
+
+CREATE TABLE Vaccine (
+  name varchar(30) NOT NULL,
+  company_name varchar(30),
+  number_of_doses int,
+  available int,
+  on_hold int,
+  description varchar(50),
+  PRIMARY KEY (name),
+  FOREIGN KEY (company_name) references Vaccine_Company (name)
+);
+
+CREATE TABLE Vaccine_Record (
+  vac_time varchar(100) NOT NULL,
+  dose_num varchar(30),
+  nurse_id int,
+  patient_id int,
+  vaccine varchar(30),
+  PRIMARY KEY (vac_time, dose_num, nurse_id, patient_id, vaccine),
+  FOREIGN KEY (nurse_id) references Nurse (employee_id),
+  FOREIGN KEY (patient_id) references Patient (ssn),
+  FOREIGN KEY (vaccine) references Vaccine (name)
+);
+
+CREATE TABLE vaccine_scheduling (
+  time_slot varchar(40) NOT NULL,
+  nurse_id int,
+  patient_id int,
+  vaccine varchar(30),
+  PRIMARY KEY (time_slot, nurse_id, patient_id),
+  FOREIGN KEY (nurse_id) references Nurse (employee_id),
+  FOREIGN KEY (patient_id) references Patient (ssn),
+  FOREIGN KEY (vaccine) references Vaccine (name)
+);
+
+CREATE TABLE vaccine_scheduling_nurses (
+  time_slot varchar(40) NOT NULL,
+  nurse_id int,
+  PRIMARY KEY (nurse_id, time_slot),
+  FOREIGN KEY (nurse_id) references Nurse (employee_id)
+);
+
+CREATE TABLE login AS
+SELECT email, password, 'admin' AS source FROM admin
+UNION ALL
+SELECT email, password, 'nurse' AS source FROM nurse
+UNION ALL
+SELECT email, password, 'patient' AS source FROM patient;
