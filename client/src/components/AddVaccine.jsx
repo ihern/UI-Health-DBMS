@@ -69,7 +69,7 @@ function AddVaccine() {
 
           <div className='mb-3'>
             <label htmlFor='Description'><strong>Description</strong></label>
-            <input type='text' name='Description' className='form-control rounded-0' 
+            <input type='text' name='description' className='form-control rounded-0' 
             placeholder='Enter Description' onChange={handleInput} />
           </div>
 
