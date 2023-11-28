@@ -115,7 +115,7 @@ function ReadPatient() {
             <th>Nurse ID</th>
           </tr>
         </thead>
-        <toby>
+        <tbody>
           {vaccineData.map((record) => {
             return (
               <tr>
@@ -126,7 +126,7 @@ function ReadPatient() {
               </tr>
             );
           })}
-        </toby>
+        </tbody>
 
       </Table>
 

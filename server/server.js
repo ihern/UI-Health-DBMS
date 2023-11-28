@@ -640,13 +640,18 @@ app.post('/add_vaccine_record', (req, res) => {
       dataBase.query(getOnHoldValue, [vaccine], (error, result) => {
          let onHold = result[0].on_hold;
 
-         // This query will update the repository, decrementing 'on_hold' value
-         dataBase.query(decrementOnHold, [onHold - 1, vaccine], (err, res) => {
-            if (err) {res.json("Failed to decrement 'on_hold' value...")}
+         // Condition to avoid negative vaccine inventory
+         if (onHold > 0) {
+            // This query will update the repository, decrementing 'on_hold' value
+            dataBase.query(decrementOnHold, [onHold - 1, vaccine], (err, res) => {
+               if (err) {res.json("Failed to decrement 'on_hold' value...")}
 
-            console.log("Decrementing on hold value...");
-            // return res.json("Decremented on hold value correctly...");
-         });
+               console.log("Decrementing on hold value...");
+               // return res.json("Decremented on hold value correctly...");
+            });
+         }
+
+         
          
       });
       
