@@ -86,8 +86,7 @@ function ReadPatient() {
         );
       })}
 
-      {scheduleData.map((timeSlot) => {
-        return (
+      
           <ul className="list-group">
             <li className="list-group-item">
               <Table striped size="sm">
@@ -97,13 +96,16 @@ function ReadPatient() {
                 </tr>
               </thead>
               <tbody className="bg-primary">
+              {scheduleData.map((timeSlot) => {
+                return (
                 <td>{timeSlot.time_slot}</td>
+                );
+              })}
               </tbody>
             </Table>
             </li>
           </ul>
-        );
-      })}
+        
       
       <h1>Vaccine History</h1>
       <Table>
