@@ -30,6 +30,13 @@ export default function Patient () {
   const[ apptTime, setApptTime] = useState([]); 
   const[ apptVax, setApptVax] = useState([]); 
   const[ warning, setWarning] = useState(''); 
+
+  const[ doses, setDoses] = useState([]); 
+  const[ vaxs, setVaxs] = useState([]); 
+  const[ date, setDates] = useState([]); 
+  const[ vNurse, setVNurse] = useState([]); 
+
+
   
 
   useEffect (() => {
@@ -54,6 +61,28 @@ export default function Patient () {
         setOccupation(info.occupation_class);
         setEmail(info.email);
         setSSN(info.ssn);
+      } else {
+        console.log("ERROOOORRRRRRRRRR");
+      }
+    })
+    .catch(err => console.log(err));
+
+    Axios.post("/patient_vaccine_record", {id: ssn})
+    .then(res => {
+      console.log(res.data);
+      if (res.data) {
+        const info = res.data;
+        console.log(info)
+        const timeSlotStrings = res.data.map(timeSlotObj => timeSlotObj.vac_time);
+        const doseStrings = res.data.map(timeSlotObj => timeSlotObj.dose_num);
+        const vaxStrings = res.data.map(timeSlotObj => timeSlotObj.vaccine);
+        const nurseStrings = res.data.map(timeSlotObj => timeSlotObj.nurse_id);
+        console.log("After we pull the data for records", timeSlotStrings);
+        setDates(timeSlotStrings);
+        setVaxs(vaxStrings);
+        setDoses(doseStrings);
+        setVNurse(nurseStrings);
+
       } else {
         console.log("ERROOOORRRRRRRRRR");
       }
@@ -290,6 +319,39 @@ export default function Patient () {
                         >
                             <td>{timeslot}</td>
                             <td><Button className='btn btn-danger'onClick={() => handleDelete(ssn, timeslot)}>Delete</Button></td>
+                        </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                <hr/>
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="tab-pane" id="account">
+                <h6>Vaccine History</h6>
+                <hr/>
+                  <Table striped size="sm">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Vaccine</th>
+                        <th>Nurse</th>
+                        <th>Dose</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {date.map((timeslot, idx) => (
+                        <tr
+                          key={idx}
+                          id={`time-${idx}`}
+                          variant="outline-primary"
+                          name="time"
+                          value={timeslot}
+                        >
+                          <td>{timeslot}</td>
+                          <td>{vaxs[idx]}</td>
+                          <td>{vNurse[idx]}</td>
+                          <td>{doses[idx]}</td>
                         </tr>
                         ))}
                     </tbody>
