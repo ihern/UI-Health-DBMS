@@ -165,6 +165,32 @@ app.post('/nurse_availability', (req, res) => {
 app.post('/patient_select_appt', (req, res) => {
 
    console.log(`\n\Making appt for ssn: ${req.body[0]}, ${req.body[1]}, ${req.body[2]}, ${req.body[3]}`);
+
+   let avail = 0;
+   let held = 0;
+
+   const getAmounts = "SELECT `available`, `on_hold` FROM Vaccine WHERE `name` = ?";
+   dataBase.query(getAmounts, [req.body[3]], (err, data) => { 
+      if (err) {
+         console.log(err);
+      }
+      avail = data[0].available;
+      held = data[0].on_hold;
+
+      avail -= 1;
+      held += 1;
+      console.log(avail);
+      console.log(held);
+   
+      const upd = "UPDATE Vaccine SET `available` = ?, `on_hold` = ? WHERE `name` = ?"
+      dataBase.query(upd, [avail, held, req.body[3]], (err, data) => { 
+         if (err) {
+            console.log(err);
+         }
+         console.log("Updated vaccine availability and hold successfully");
+      });
+   });
+
    const sql = 'INSERT INTO vaccine_scheduling (`nurse_id`, `patient_id`, `time_slot`, `vaccine`) VALUES (?, ?, ?, ?)';
    const patientUpdatedValues = [
       req.body[0],
@@ -590,6 +616,8 @@ app.post('/add_vaccine_record', (req, res) => {
    
    const getVaccine = "SELECT vaccine FROM vaccine_scheduling WHERE `nurse_id` = ? AND `time_slot` = ? AND `patient_id`=?";
    const insertRecord = "INSERT INTO vaccine_record (`dose_num`,`nurse_id`, `patient_id`, `vaccine`, `vac_time`) VALUES (?,?,?,?,?)";
+   const getOnHoldValue = "SELECT `on_hold` FROM vaccine WHERE `name`=?";
+   const decrementOnHold = "UPDATE vaccine SET `on_hold`=? WHERE `name`=?";
    
    // This query will fetch the associated vaccine
    dataBase.query(getVaccine, [nurseId, timeSlot, patientId], (err, result) => {
@@ -599,14 +627,29 @@ app.post('/add_vaccine_record', (req, res) => {
       console.log(vaccine);
 
       // This query will insert the vaccine record
-      dataBase.query(insertRecord, [1, nurseId, patientId, vaccine,  timeSlot ], (err, res) => {
+      dataBase.query(insertRecord, [1, nurseId, patientId, vaccine,  timeSlot ], (err, result) => {
 
          if (err)
-            return res.json({ message: "Something unexpected has occurred" + err });
+            return res.json("Something unexpected has occurred");
 
          console.log("Adding vaccine record...");
          return res.json("Vaccine record added successfully");
       });
+      
+      // This query will get the 'on_hold' value for a given vaccine
+      dataBase.query(getOnHoldValue, [vaccine], (error, result) => {
+         let onHold = result[0].on_hold;
+
+         // This query will update the repository, decrementing 'on_hold' value
+         dataBase.query(decrementOnHold, [onHold - 1, vaccine], (err, res) => {
+            if (err) {res.json("Failed to decrement 'on_hold' value...")}
+
+            console.log("Decrementing on hold value...");
+            // return res.json("Decremented on hold value correctly...");
+         });
+         
+      });
+      
    });
 });
 
