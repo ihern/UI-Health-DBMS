@@ -4,12 +4,6 @@ import { useLocation } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
-
-// TODO 
-// ADD DELETE APPOINTMENT FUNCTIONALITY
-// SET UP THE VACCINE SELECTION
-// 
-
 export default function Patient () {
 
   const location = useLocation();
@@ -27,10 +21,15 @@ export default function Patient () {
   const [age, setAge] = useState('');
   const [occupation, setOccupation] = useState('');
   const [email, setEmail] = useState('');
-  const [ssn, setSSN] = useState('');
-  const[ timeSlots, setTimeSlots] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM', '12/1/23 12:00PM']); 
-  const[ vaccines, setVaccines] = useState(['Moderna', 'Pfizer']); 
-  const[ appointments, setAppointments] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM']); 
+  const [ssn, setSSN] = useState();
+  const[ timeSlots, setTimeSlots] = useState([]); 
+  const[ vaccines, setVaccines] = useState([]); 
+  const[ appointments, setAppointments] = useState([]); 
+  const[ nurses, setNurses] = useState(); 
+  const[ apptNurse, setApptNurse] = useState([]); 
+  const[ apptTime, setApptTime] = useState([]); 
+  const[ apptVax, setApptVax] = useState([]); 
+  
 
   useEffect (() => {
 
@@ -63,9 +62,13 @@ export default function Patient () {
     // add a request to get all the time slots from the vaccine_schedule
     Axios.get('/get_schedule')
     .then((res) => {
+      const info = res.data; 
+      console.log(info);
       const timeSlotStrings = res.data.map(timeSlotObj => timeSlotObj.time_slot);
-      console.log('Time slot array: ', timeSlotStrings);
+      const nurseTimeSlotStrings = res.data.map(timeSlotObj => timeSlotObj.nurse_id);
       setTimeSlots(timeSlotStrings);
+      setNurses(nurseTimeSlotStrings);
+      console.log('Time slot array: ', timeSlotStrings, nurseTimeSlotStrings);
     })
     .catch((err) => console.log(err));
 
@@ -85,11 +88,11 @@ export default function Patient () {
     })
     .catch((err) => console.log(err));
 
-  },[emailData, ssn]);
+  },[emailData, ssn, ]);
 
 
   const updateInfo = () => {
-    const updatedData = [ fname, mi, lname, address, phoneNum, race, gender, age,history, occupation, email];
+    const updatedData = [ fname, mi, lname, address, phoneNum, race, gender, age,history, occupation, email, ssn];
     console.log(updatedData);
     Axios.post("http://localhost:4000/patient_update", updatedData)
         .then(res => {
@@ -102,14 +105,30 @@ export default function Patient () {
         .catch(err => console.log(err));
   };
 
+  const makeAppointment = () => {
+    const appt = [ apptNurse, ssn, apptTime, apptVax ];
+    console.log(appt);
+    Axios.post("http://localhost:4000/patient_select_appt", appt)
+        .then(res => {
+            if (res.data === 'Error') {
+              console.log("Did not make appointment correctly", res.data)
+            } else {
+              console.log("Appointment successful");
+            }
+        })
+        .catch(err => console.log(err));
+    setApptTime('');
+    setApptVax('');
+  };
+
   const handleDelete = (pSSN, time) => {
-  const appt = [pSSN, time];
-  console.log('inside handleDelete: ', time);
-  Axios.post('/delete_appointments_patients', appt)
-    .then((res) => {
-      console.log('Returning values:');
-    })
-    .catch((err) => console.log(err));
+    const appt = [pSSN, time];
+    console.log('inside handleDelete: ', time);
+    Axios.post('/delete_appointments_patients', appt)
+      .then((res) => {
+        console.log('Returning values:');
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -130,9 +149,6 @@ export default function Patient () {
                   <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"/>
                   <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
                 </svg> Vaccine Scheduling
-                </a>
-                <a href="#account" data-toggle="tab" className="nav-item nav-link has-icon nav-link-faded">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-settings mr-2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Account Settings
                 </a>
               </nav>
             </div>
@@ -185,6 +201,12 @@ export default function Patient () {
 
                     <label>Occupation</label>
                     <input value={occupation} onChange={(e) =>setOccupation (e.target.value)} type="text" className="form-control" id="occupation"/>
+                  
+                    <label>Email</label>
+                    <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className="form-control" id="email"/>
+                    
+                    <label>SSN</label>
+                    <input value={ssn} onChange={(e) => setSSN(e.target.value)} type="text" className="form-control" id="ssn"/>
                   </div>
                   <div className="form-group small text-muted my-2">
                     All of the fields on this page should be updated to be the most accurate.
@@ -200,7 +222,7 @@ export default function Patient () {
                 <form>
                   <div className="form-group">
                     <label>Time</label>
-                    <select className="form-select my-3" aria-label="Default select example" id="appointments">
+                    <select value={apptTime} onChange={(e) => {setApptTime(e.target.value); setApptNurse(nurses[e.target.selectedIndex - 1]);}} className="form-select my-3" aria-label="Default select example" id="appointments">
                     <option value="" disabled selected>Appointments Available</option>
                       {timeSlots.map((timeslot, idx) => (
                         <option
@@ -214,7 +236,7 @@ export default function Patient () {
                         </option>
                         ))}
                     </select>
-                    <select className="form-select my-3" aria-label="Default select example" id="appointments">
+                    <select value={apptVax} onChange={(e) => setApptVax(e.target.value)} className="form-select my-3" aria-label="Default select example" id="appointments">
                     <option value="" disabled selected>Vaccines Available</option>
                       {vaccines.map((vac, idx) => (
                         <option
@@ -228,7 +250,7 @@ export default function Patient () {
                         </option>
                         ))}
                     </select>
-                    <button type="button" className="btn btn-primary my-2" onClick={updateInfo}>Submit</button>
+                    <button type="button" className="btn btn-primary my-2" onClick={makeAppointment}>Submit</button>
                   </div>                  
                 </form>
               </div>
@@ -258,21 +280,6 @@ export default function Patient () {
                         ))}
                     </tbody>
                   </Table>
-                <hr/>
-              </div>
-            </div>
-            <div className="card-body">
-              <div className="tab-pane" id="account">
-                <h6>ACCOUNT SETTINGS</h6>
-                <hr/>
-                <form>
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" className="form-control" id="email"  disabled/>
-                    <label>SSN</label>
-                    <input value={ssn} onChange={(e) => setSSN(e.target.value)} type="text" className="form-control" id="ssn"  disabled/>
-                  </div>                  
-                </form>
                 <hr/>
               </div>
             </div>

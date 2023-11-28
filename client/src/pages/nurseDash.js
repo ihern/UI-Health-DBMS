@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios'
 import { useLocation } from 'react-router-dom';
 import Table from 'react-bootstrap/Table';
-// import Button from 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button';
  
 
 export default function Patient () {
@@ -20,8 +20,8 @@ export default function Patient () {
   const [age, setAge] = useState('');
   const [email, setEmail] = useState('');
   const [empID, setEmpID] = useState('');
-//   const[ timeSlots, setTimeSlots] = useState([]); 
-//   const[ appointments, setAppointments] = useState(['11/12/23 1:00PM', '12/2/23 3:00PM']); 
+  const[ availability, setAvailability] = useState(''); 
+  const[ appointments, setAppointments] = useState([]); 
 
   useEffect (() => {
 
@@ -48,33 +48,55 @@ export default function Patient () {
     })
     .catch(err => console.log(err));
     
+    Axios.post('/get_appointments_nurses', {nurse: empID})
+    .then((res) => {
+      const appts = res.data.map(apptnObj => apptnObj.time_slot);
+      console.log('Appointments for nurse: ', appts);
+      setAppointments(appts);
+    })
+    .catch((err) => console.log(err));
 
-  },[emailData]);
+  },[emailData, empID]);
 
 
   const updateInfo = () => {
-    const updatedData = [address, phoneNum];
+    const updatedData = [address, phoneNum, email];
     console.log(updatedData);
     Axios.post("http://localhost:4000/nurse_update", updatedData)
-        .then(res => {
-            if (res.data) {
-              console.log("Update successful")
-            } else {
-              console.log("Did not update correctly");
-            }
-        })
-        .catch(err => console.log(err));
+    .then(res => {
+        if (res.data) {
+          console.log("Update successful")
+        } else {
+          console.log("Did not update correctly");
+        }
+    })
+    .catch(err => console.log(err));
   };
 
-//   const handleDelete = (pSSN, time) => {
-//   const appt = [pSSN, time];
-//   console.log('inside handleDelete: ', time);
-//   Axios.post('/delete_appointments_patients', appt)
-//     .then((res) => {
-//       console.log('Returning values:');
-//     })
-//     .catch((err) => console.log(err));
-//   };
+  const makeAvailable = () => {
+    const updatedData = [availability, empID];
+    console.log(updatedData);
+    Axios.post("http://localhost:4000/nurse_availability", updatedData)
+    .then(res => {
+        if (res.data) {
+          console.log("Update successful")
+        } else {
+          console.log("Did not update correctly");
+        }
+    })
+    .catch(err => console.log(err));
+    setAvailability('');
+  };
+
+  const handleDelete = (nID, time) => {
+    const appt = [nID, time];
+    console.log('Inside handleDelete: ', time);
+    Axios.post('/delete_appointments_nurses', appt)
+      .then((res) => {
+        console.log('Returning values:');
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className="container">
@@ -140,7 +162,6 @@ export default function Patient () {
                     
                     <label>Employee ID</label>
                     <input value={empID} onChange={(e) => setEmpID(e.target.value)} type="text" className="form-control" id="empID"  disabled/>
-                    
                   </div>
                 </form>
               </div>
@@ -152,8 +173,11 @@ export default function Patient () {
                 <form>
                   <div className="form-group">
                     <label>Time</label>
-                    <input  type="text" className="form-control" id="schedule"/>
-                    <button type="button" className="btn btn-primary my-2" onClick={updateInfo}>Submit</button>
+                    <div className="form-group small text-muted my-2">
+                      Please input time available in the exact format  EX: 'M, Feb. 15 2021, 10:00-11:00 am'
+                    </div>
+                    <input value={availability} onChange={(e) => setAvailability(e.target.value)} placeholder="WEEKDAY LETTER, MON. DD YYYY, HH:00-HH:00 am/pm" type="text" className="form-control" id="schedule"/>
+                    <button type="button" className="btn btn-primary my-2" onClick={makeAvailable}>Submit</button>
                   </div>                  
                 </form>
               </div>
@@ -169,7 +193,7 @@ export default function Patient () {
                       </tr>
                     </thead>
                     <tbody>
-                      {/* {appointments.map((timeslot, idx) => (
+                      {appointments.map((timeslot, idx) => (
                         <tr
                             key={idx}
                             id={`time-${idx}`}
@@ -178,9 +202,9 @@ export default function Patient () {
                             value={timeslot}
                         >
                             <td>{timeslot}</td>
-                            <td><Button className='btn btn-danger'onClick={() => handleDelete(ssn, timeslot)}>Delete</Button></td>
+                            <td><Button className='btn btn-danger'onClick={() => handleDelete(empID, timeslot)}>Delete</Button></td>
                         </tr>
-                        ))} */}
+                        ))}
                     </tbody>
                   </Table>
                 <hr/>
