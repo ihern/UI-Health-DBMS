@@ -221,7 +221,7 @@ app.post('/registerNurse', (req, res) => {
          return res.status(500).json({ error: "An error occurred" });
       }  
 
-      console.log("\nRegistered nurse...\n")
+      console.log("\nRegistering nurse...\n");
       return res.status(200).json(data);
    });
 
@@ -259,6 +259,18 @@ app.get('/get_nurse/:id', (req, res) => {
    })
 });
 
+// This query will get the specified nurse's scheduled time slots
+app.get('/get_nurse_schedule/:id', (req, res) => {
+   const id = req.params.id;
+   const getSchedule = "SELECT `time_slot` FROM vaccine_scheduling WHERE `nurse_id`=?";
+   dataBase.query(getSchedule, [id], (err, result) => {
+      if (err) return res.json({"message":"Server error getting schedule"})
+
+      console.log("Fetching nurse schedule...\n");
+      return res.json(result);
+   })
+})
+
 // This query will edit the specified registered nurse
 app.post('/edit_nurse/:id', (req, res) => {
    const id = req.params.id;
@@ -285,7 +297,7 @@ app.post('/edit_nurse/:id', (req, res) => {
    })
 });
 
-// This query will delete the specified registered nurse
+// This query will delete the specified registered nurse and their login info
 app.delete('/delete_nurse/:id', (req, res) => {
    const id = req.params.id;
    const deleteNurse = "DELETE FROM nurse WHERE `employee_id`=?";
@@ -315,7 +327,6 @@ app.delete('/delete_nurse/:id', (req, res) => {
       });
    });
 });
-
 
 // This query will fetch the specified vaccine
 app.get('/get_vaccine/:name', (req, res) => {
